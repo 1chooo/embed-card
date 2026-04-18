@@ -13,8 +13,9 @@ export default function Layout({ children }: { children: ReactNode }) {
       sidebar={{
         banner: (
           <div className="rounded-2xl border border-fd-border/70 bg-white/80 p-4 text-sm leading-6 text-fd-muted-foreground dark:bg-white/5">
-            One package, many surfaces. Use React, a custom element, or the
-            low-level resolver depending on the app.
+            The live playground is on the homepage. Use these guides to wire
+            the same package into React, a custom element, or a manual render
+            path.
           </div>
         ),
       }}

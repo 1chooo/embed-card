@@ -1,35 +1,33 @@
 import type { Metadata } from "next"
-import type { CSSProperties } from "react"
+import type { CSSProperties, ReactNode } from "react"
 
-import "@workspace/ui/globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@workspace/ui/lib/utils"
+import { RootProvider } from "fumadocs-ui/provider/next"
+
+import "./global.css"
 
 export const metadata: Metadata = {
-  title: "embed-card demo",
+  title: {
+    default: "embed-card",
+    template: "%s | embed-card",
+  },
   description:
-    "A Next.js playground for the embed-card package, built inside a shadcn/ui monorepo.",
+    "Documentation and live demos for the embed-card package in one Next.js app.",
 }
 
 const fontVariables = {
-  "--font-sans": '"Avenir Next", "Trebuchet MS", sans-serif',
+  "--font-sans": '"Avenir Next", "Gill Sans", sans-serif',
   "--font-mono": '"SFMono-Regular", "Menlo", monospace',
 } as CSSProperties
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", "font-sans")}
       style={fontVariables}
     >
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
+      <body className="flex min-h-screen flex-col font-sans text-fd-foreground">
+        <RootProvider>{children}</RootProvider>
       </body>
     </html>
   )

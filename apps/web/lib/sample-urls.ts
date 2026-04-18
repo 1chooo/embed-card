@@ -5,7 +5,7 @@ export const sampleEmbeds = [
   },
   {
     label: "X",
-    url: "https://x.com/vercel/status/1808506503694602450",
+    url: "https://x.com/1chooo___/status/2028573993972969585",
   },
   {
     label: "Reddit",

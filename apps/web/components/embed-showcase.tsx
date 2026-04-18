@@ -2,10 +2,18 @@
 
 import { useState } from "react"
 
-import { Button } from "@workspace/ui/components/button"
 import { EmbedCard } from "embed-card"
 
 import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
+
+function pillClassName(isActive: boolean): string {
+  return [
+    "inline-flex h-10 items-center rounded-full border px-4 text-sm font-medium transition",
+    isActive
+      ? "border-fd-primary bg-fd-primary text-fd-primary-foreground"
+      : "border-fd-border bg-white/80 text-fd-foreground hover:bg-fd-muted dark:bg-white/5 dark:hover:bg-white/10",
+  ].join(" ")
+}
 
 export function EmbedShowcase() {
   const [url, setUrl] = useState<string>(sampleEmbeds[0].url)
@@ -40,12 +48,15 @@ registerEmbedCard()
 <embed-card url="${url}"></embed-card>`
 
   return (
-    <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+    <section
+      className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]"
+      id="playground"
+    >
       <div className="grid gap-6">
-        <article className="rounded-[34px] border border-border/70 bg-background/90 p-6 shadow-[0_22px_80px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8">
+        <article className="rounded-[34px] border border-fd-border/70 bg-white/80 p-6 shadow-[0_22px_80px_rgba(15,23,42,0.08)] backdrop-blur dark:bg-white/5 sm:p-8">
           <div className="flex flex-col gap-4">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-fd-muted-foreground">
                 Live playground
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em]">
@@ -56,7 +67,7 @@ registerEmbedCard()
             <label className="grid gap-2 text-sm font-medium">
               Embed URL
               <input
-                className="h-12 rounded-2xl border border-border/70 bg-background px-4 text-sm outline-none transition focus:border-foreground/20 focus:ring-4 focus:ring-foreground/5"
+                className="h-12 rounded-2xl border border-fd-border bg-white px-4 text-sm outline-none transition focus:border-fd-primary focus:ring-4 focus:ring-fd-primary/10 dark:bg-white/10"
                 onChange={(event) => setUrl(event.target.value)}
                 placeholder="https://www.youtube.com/watch?v=..."
                 value={url}
@@ -64,52 +75,54 @@ registerEmbedCard()
             </label>
 
             <div className="grid gap-3">
-              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-fd-muted-foreground">
                 Sample providers
               </span>
               <div className="flex flex-wrap gap-2">
                 {sampleEmbeds.map((sample) => (
-                  <Button
+                  <button
+                    className={pillClassName(sample.url === url)}
                     key={sample.label}
                     onClick={() => setUrl(sample.url)}
-                    variant={sample.url === url ? "default" : "outline"}
+                    type="button"
                   >
                     {sample.label}
-                  </Button>
+                  </button>
                 ))}
               </div>
             </div>
 
             <div className="grid gap-3">
-              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-fd-muted-foreground">
                 Theme presets
               </span>
               <div className="flex flex-wrap gap-2">
                 {demoThemes.map((theme) => (
-                  <Button
+                  <button
+                    className={pillClassName(theme.id === themeId)}
                     key={theme.id}
                     onClick={() => setThemeId(theme.id)}
-                    variant={theme.id === themeId ? "default" : "outline"}
+                    type="button"
                   >
                     {theme.label}
-                  </Button>
+                  </button>
                 ))}
               </div>
             </div>
           </div>
         </article>
 
-        <article className="rounded-[34px] border border-border/70 bg-gradient-to-br from-background to-background/70 p-5 shadow-[0_28px_90px_rgba(15,23,42,0.08)] sm:p-7">
+        <article className="rounded-[34px] border border-fd-border/70 bg-gradient-to-br from-white to-white/70 p-5 shadow-[0_28px_90px_rgba(15,23,42,0.08)] dark:from-white/5 dark:to-white/10 sm:p-7">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-fd-muted-foreground">
                 Preview
               </p>
               <h3 className="mt-2 text-2xl font-semibold tracking-[-0.04em]">
                 `EmbedCard` rendered from the workspace package
               </h3>
             </div>
-            <div className="rounded-full border border-border/70 bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
+            <div className="rounded-full border border-fd-border/70 bg-white px-3 py-1 text-xs font-medium text-fd-muted-foreground dark:bg-white/5">
               Theme: {activeTheme.label}
             </div>
           </div>
@@ -119,7 +132,7 @@ registerEmbedCard()
       </div>
 
       <div className="grid gap-6">
-        <article className="rounded-[34px] border border-border/70 bg-zinc-950 p-6 text-zinc-50 shadow-[0_24px_80px_rgba(15,23,42,0.18)] sm:p-7">
+        <article className="rounded-[34px] border border-white/10 bg-zinc-950 p-6 text-zinc-50 shadow-[0_24px_80px_rgba(15,23,42,0.18)] sm:p-7">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-400">
             Quick start
           </p>
@@ -140,21 +153,21 @@ registerEmbedCard()
           </pre>
         </article>
 
-        <article className="rounded-[34px] border border-border/70 bg-background/90 p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)] sm:p-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+        <article className="rounded-[34px] border border-fd-border/70 bg-white/80 p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)] dark:bg-white/5 sm:p-7">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-fd-muted-foreground">
             Framework story
           </p>
           <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em]">
             React first, but not React only
           </h3>
-          <p className="mt-3 text-sm leading-7 text-muted-foreground">
+          <p className="mt-3 text-sm leading-7 text-fd-muted-foreground">
             The same package exports a React component, a custom element
             registrar, and low-level helpers for manual rendering. That keeps
             the install surface small while still leaving room for Vue, Svelte,
             Astro, or plain HTML integrations.
           </p>
 
-          <pre className="mt-5 overflow-x-auto rounded-2xl border border-border/70 bg-muted/40 p-4 text-sm leading-7">
+          <pre className="mt-5 overflow-x-auto rounded-2xl border border-fd-border/70 bg-black/[0.03] p-4 text-sm leading-7 dark:bg-white/5">
             <code>{webComponentSnippet}</code>
           </pre>
         </article>

@@ -1,7 +1,7 @@
 # embed-card
 
 `embed-card` is a small frontend package for turning a URL into a polished embed
-card with one install.
+card with one install. The monorepo docs and live demos live in `apps/web`.
 
 ## Install
 
@@ -59,7 +59,7 @@ registerEmbedCard()
 ```ts
 import { resolveEmbed } from "embed-card/manual"
 
-const embed = resolveEmbed("https://x.com/vercel/status/1808506503694602450")
+const embed = resolveEmbed("https://x.com/1chooo___/status/2028573993972969585")
 ```
 
 ## Built-in providers

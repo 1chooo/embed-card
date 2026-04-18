@@ -1,6 +1,10 @@
+import { createMDX } from "fumadocs-mdx/next"
+
+const withMDX = createMDX()
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@workspace/ui", "embed-card"],
+  transpilePackages: ["embed-card"],
 }
 
-export default nextConfig
+export default withMDX(nextConfig)

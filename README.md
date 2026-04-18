@@ -6,8 +6,7 @@ A pnpm + Turborepo workspace bootstrapped with `pnpm dlx shadcn@latest init --mo
 
 ```txt
 apps/
-  web/   -> Next.js demo playground
-  docs/  -> Fumadocs site
+  web/   -> Next.js docs site + live demo playground
 packages/
   embed-card/ -> publishable package
   ui/         -> shared shadcn/ui components
@@ -38,5 +37,4 @@ To run a single app:
 
 ```bash
 pnpm --filter web dev
-pnpm --filter docs dev
 ```
