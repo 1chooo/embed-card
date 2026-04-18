@@ -1,0 +1,31 @@
+---
+title: Web Component
+description: Use the same package from Vue, Svelte, Astro, or plain HTML with the custom element export.
+---
+
+# Web Component
+
+If the host app is not React-first, register the custom element:
+
+```ts
+import { registerEmbedCard } from "embed-card/web-component"
+
+registerEmbedCard()
+```
+
+Then use it anywhere HTML is allowed:
+
+```html
+<embed-card
+  url="https://www.google.com/maps?q=Tokyo+Station&output=embed"
+  accent-color="#0f766e"
+  radius="26px"
+></embed-card>
+```
+
+## Good fit for
+
+- Vue apps that want a tiny integration surface
+- Svelte or Astro pages with isolated embeds
+- CMS-driven frontends rendering HTML fragments
+- Plain JS projects that still want the package logic

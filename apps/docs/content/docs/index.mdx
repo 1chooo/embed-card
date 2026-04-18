@@ -1,0 +1,38 @@
+---
+title: Overview
+description: Start with the package shape, the monorepo layout, and the supported providers.
+---
+
+# `embed-card`
+
+`embed-card` is a frontend-first component package for turning links into embeds with one API:
+
+```tsx
+import { EmbedCard } from "embed-card"
+
+<EmbedCard url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+```
+
+## What this repo includes
+
+- A publishable package in `packages/embed-card`
+- A Next.js demo app in `apps/web`
+- A Fumadocs documentation app in `apps/docs`
+- Cross-framework usage examples in `examples/`
+
+## Built-in providers
+
+- YouTube
+- X / Twitter
+- Reddit
+- Google Maps
+- Vimeo
+- Fallback link preview for unmatched URLs
+
+## Design goal
+
+Consumers should only need **one install** for the common path, while still getting:
+
+- A React component for Next.js and React apps
+- A web component export for other frameworks
+- Low-level resolver helpers for manual rendering and custom provider registries

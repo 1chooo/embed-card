@@ -1,0 +1,57 @@
+---
+title: React
+description: The primary package API is a React component designed for Next.js and React apps.
+---
+
+# React
+
+The main export is intentionally small:
+
+```tsx
+import { EmbedCard } from "embed-card"
+
+<EmbedCard url="https://www.reddit.com/r/reactjs/comments/1bz9yqv/what_are_you_building_with_react_this_week/" />
+```
+
+## Why start with React?
+
+- The demo app already runs on Next.js
+- JSX gives the cleanest install story for App Router users
+- The same package can still power non-React apps through other exports
+
+## With custom providers
+
+```tsx
+import {
+  EmbedCard,
+  createEmbedProvider,
+  defaultProviders,
+} from "embed-card"
+
+const spotifyProvider = createEmbedProvider({
+  id: "spotify",
+  label: "Spotify",
+  accentColor: "#1db954",
+  match: (url) => url.hostname === "open.spotify.com",
+  resolve: (url) => ({
+    provider: "spotify",
+    providerLabel: "Spotify",
+    accentColor: "#1db954",
+    title: "Spotify content",
+    description: "Custom providers plug into the same card contract.",
+    site: url.hostname,
+    url: url.toString(),
+    displayUrl: url.toString(),
+    renderer: {
+      type: "link",
+      href: url.toString(),
+      ctaLabel: "Open on Spotify",
+    },
+  }),
+})
+
+<EmbedCard
+  providers={[spotifyProvider, ...defaultProviders]}
+  url="https://open.spotify.com/track/7GhIk7Il098yCjg4BQjzvb"
+/>
+```

@@ -1,0 +1,55 @@
+---
+title: Getting Started
+description: Install the package, render your first card, and understand the workspace layout.
+---
+
+# Getting Started
+
+## Install the package
+
+```bash
+pnpm add embed-card
+```
+
+## React usage
+
+```tsx
+import { EmbedCard } from "embed-card"
+
+export function ArticleEmbed() {
+  return (
+    <EmbedCard url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+  )
+}
+```
+
+## Theme the card
+
+```tsx
+import { EmbedCard } from "embed-card"
+
+export function BrandedArticleEmbed() {
+  return (
+    <EmbedCard
+      url="https://vimeo.com/76979871"
+      theme={{
+        accentColor: "#e11d48",
+        radius: 28,
+        shadow: "0 28px 100px rgba(225, 29, 72, 0.18)",
+      }}
+    />
+  )
+}
+```
+
+## Repo layout
+
+```txt
+apps/
+  web/   -> demo playground
+  docs/  -> Fumadocs site
+packages/
+  embed-card/ -> publishable library
+  ui/         -> shared shadcn/ui components
+examples/     -> copy-paste snippets for frameworks
+```

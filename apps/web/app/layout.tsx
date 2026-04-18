@@ -1,15 +1,20 @@
-import { Geist, Geist_Mono } from "next/font/google"
+import type { Metadata } from "next"
+import type { CSSProperties } from "react"
 
 import "@workspace/ui/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@workspace/ui/lib/utils";
+import { cn } from "@workspace/ui/lib/utils"
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'})
+export const metadata: Metadata = {
+  title: "embed-card demo",
+  description:
+    "A Next.js playground for the embed-card package, built inside a shadcn/ui monorepo.",
+}
 
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-})
+const fontVariables = {
+  "--font-sans": '"Avenir Next", "Trebuchet MS", sans-serif',
+  "--font-mono": '"SFMono-Regular", "Menlo", monospace',
+} as CSSProperties
 
 export default function RootLayout({
   children,
@@ -20,7 +25,8 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", geist.variable)}
+      className={cn("antialiased", "font-sans")}
+      style={fontVariables}
     >
       <body>
         <ThemeProvider>{children}</ThemeProvider>

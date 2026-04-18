@@ -1,0 +1,38 @@
+---
+title: Manual Rendering
+description: Build your own UI on top of the low-level resolver helpers.
+---
+
+# Manual Rendering
+
+For teams that want total control over markup, use the manual helpers:
+
+```tsx
+import { resolveEmbed } from "embed-card/manual"
+
+export function CustomShell({ url }: { url: string }) {
+  const embed = resolveEmbed(url)
+
+  if (embed.renderer.type === "iframe") {
+    return (
+      <iframe
+        allow={embed.renderer.allow}
+        src={embed.renderer.src}
+        title={embed.renderer.title}
+      />
+    )
+  }
+
+  if (embed.renderer.type === "link") {
+    return <a href={embed.renderer.href}>{embed.displayUrl}</a>
+  }
+
+  return <p>{embed.renderer.message}</p>
+}
+```
+
+## Why this export matters
+
+- Design systems can keep their own primitives
+- Teams can wire analytics around embed decisions
+- Framework adapters can share the same provider registry logic

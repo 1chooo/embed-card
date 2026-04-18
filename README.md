@@ -1,21 +1,42 @@
-# shadcn/ui monorepo template
+# embed-card monorepo
 
-This is a Next.js monorepo template with shadcn/ui.
+A pnpm + Turborepo workspace bootstrapped with `pnpm dlx shadcn@latest init --monorepo`, then extended into a package-focused setup for URL embeds.
 
-## Adding components
+## Workspace layout
 
-To add components to your app, run the following command at the root of your `web` app:
-
-```bash
-pnpm dlx shadcn@latest add button -c apps/web
+```txt
+apps/
+  web/   -> Next.js demo playground
+  docs/  -> Fumadocs site
+packages/
+  embed-card/ -> publishable package
+  ui/         -> shared shadcn/ui components
+examples/     -> framework usage snippets
 ```
 
-This will place the ui components in the `packages/ui/src/components` directory.
+## What the package does
 
-## Using components
+`embed-card` exposes:
 
-To use the components in your app, import them from the `ui` package.
+- `EmbedCard` for React / Next.js
+- `registerEmbedCard()` for web component usage
+- `resolveEmbed()` and provider helpers for manual rendering
 
-```tsx
-import { Button } from "@workspace/ui/components/button";
+Built-in providers currently include YouTube, X / Twitter, Reddit, Vimeo, Google Maps, plus a link-preview fallback.
+
+## Commands
+
+```bash
+pnpm install
+pnpm dev
+pnpm build
+pnpm lint
+pnpm typecheck
+```
+
+To run a single app:
+
+```bash
+pnpm --filter web dev
+pnpm --filter docs dev
 ```
