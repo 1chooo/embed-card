@@ -1,6 +1,6 @@
 {
   "name": "embed-card",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "private": false,
   "description": "Framework-friendly embed cards for YouTube, X, Reddit, Google Maps, Vimeo, and custom providers.",
@@ -18,13 +18,13 @@
   "files": [
     "dist"
   ],
-  "homepage": "https://github.com/1chooo/social-media-embed/tree/main/apps/web",
+  "homepage": "https://1chooo.com/embed-card",
   "bugs": {
-    "url": "https://github.com/1chooo/social-media-embed/issues"
+    "url": "https://github.com/1chooo/embed-card/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/1chooo/social-media-embed.git",
+    "url": "git+https://github.com/1chooo/embed-card.git",
     "directory": "packages/embed-card"
   },
   "main": "./dist/index.js",
