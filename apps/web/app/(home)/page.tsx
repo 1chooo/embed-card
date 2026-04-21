@@ -19,17 +19,19 @@ export default function HomePage() {
       <section className="grid min-w-0 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div className="min-w-0 space-y-6">
           <div className="inline-flex rounded-full border border-fd-border/70 bg-white/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-fd-muted-foreground dark:bg-white/5">
-            One app for docs and demos
+            One URL, many embeds
           </div>
           <div className="space-y-4">
             <h1 className="text-balance text-4xl font-semibold tracking-[-0.06em] sm:text-5xl lg:text-6xl">
-              Ship the package docs and the live playground from the same
-              Next.js app.
+              Turn links into embed cards with a single component—docs and a
+              live playground ship from this Next.js app.
             </h1>
             <p className="max-w-2xl text-lg leading-8 text-fd-muted-foreground">
-              `embed-card` now has a single home in the workspace: the
-              documentation lives under `/docs`, and the interactive playground
-              lives right here on the homepage.
+              Stop hand-rolling a different embed component for every provider.
+              Pass a `url` to `EmbedCard` and it resolves YouTube, X, Reddit,
+              Google Maps, Vimeo, and more, with a fallback link preview when
+              nothing matches. Read `/docs` or paste URLs in the playground on
+              this page.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -54,10 +56,13 @@ export default function HomePage() {
               What ships today
             </div>
             <ul className="mt-4 grid gap-3 text-sm leading-7 text-fd-muted-foreground">
-              <li>One publishable `embed-card` package in `packages/embed-card`.</li>
-              <li>Docs pages and the live playground inside `apps/web`.</li>
-              <li>React, web component, and manual rendering examples in one place.</li>
-              <li>Interactive provider and theme demos wired to the real workspace package.</li>
+              <li>
+                One publishable `embed-card` package: match a URL to a card
+                without maintaining per-provider UI yourself.
+              </li>
+              <li>Documentation under `/docs` and an interactive playground in `apps/web`.</li>
+              <li>React, web component, and manual rendering examples in one workspace.</li>
+              <li>Provider and theme demos wired to the real package build.</li>
             </ul>
           </div>
         </div>
@@ -80,26 +85,27 @@ export default function HomePage() {
       <section className="grid min-w-0 gap-4 md:grid-cols-3">
         <article className="rounded-[28px] border border-fd-border/70 bg-white/70 p-5 dark:bg-white/5">
           <Boxes className="size-5 text-rose-500" />
-          <h2 className="mt-4 text-lg font-semibold">One surface</h2>
+          <h2 className="mt-4 text-lg font-semibold">URL-driven embeds</h2>
           <p className="mt-2 text-sm leading-7 text-fd-muted-foreground">
-            The demo no longer lives in a separate app, so the docs and the
-            playground evolve together.
+            One `EmbedCard` and a `url` cover the built-in providers. Add custom
+            matchers when you need rules the defaults do not ship with.
           </p>
         </article>
         <article className="rounded-[28px] border border-fd-border/70 bg-white/70 p-5 dark:bg-white/5">
           <Code2 className="size-5 text-sky-500" />
           <h2 className="mt-4 text-lg font-semibold">Real package imports</h2>
           <p className="mt-2 text-sm leading-7 text-fd-muted-foreground">
-            The homepage preview renders `embed-card` directly from the
-            workspace package, so breakages show up early.
+            The homepage renders `embed-card` straight from the workspace
+            package, so integration issues surface before you publish.
           </p>
         </article>
         <article className="rounded-[28px] border border-fd-border/70 bg-white/70 p-5 dark:bg-white/5">
           <PlayCircle className="size-5 text-emerald-500" />
           <h2 className="mt-4 text-lg font-semibold">Provider coverage</h2>
           <p className="mt-2 text-sm leading-7 text-fd-muted-foreground">
-            You can switch between YouTube, X, Reddit (JSON thread preview in the
-            browser), Google Maps, and Vimeo without leaving the landing page.
+            Try YouTube, X, Reddit (JSON thread preview in the browser), Google
+            Maps, and Vimeo in the playground and showcase without leaving this
+            page.
           </p>
         </article>
       </section>

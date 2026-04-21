@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     template: "%s | embed-card",
   },
   description:
-    "Documentation and live demos for the embed-card package in one Next.js app.",
+    "Pass a URL and render the matching embed card—YouTube, X, Reddit, Maps, Vimeo, and more—without wiring one-off components. Docs and live demos ship in this Next.js app.",
 }
 
 export const viewport: Viewport = {
