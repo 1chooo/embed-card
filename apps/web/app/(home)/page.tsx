@@ -98,8 +98,8 @@ export default function HomePage() {
           <PlayCircle className="size-5 text-emerald-500" />
           <h2 className="mt-4 text-lg font-semibold">Provider coverage</h2>
           <p className="mt-2 text-sm leading-7 text-fd-muted-foreground">
-            You can switch between YouTube, X, Reddit, Google Maps, and Vimeo
-            without leaving the landing page.
+            You can switch between YouTube, X, Reddit (JSON thread preview in the
+            browser), Google Maps, and Vimeo without leaving the landing page.
           </p>
         </article>
       </section>
