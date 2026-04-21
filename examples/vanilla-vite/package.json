@@ -1,0 +1,19 @@
+{
+  "name": "embed-card-example-vanilla-vite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "embed-card": "0.1.2"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vite": "^6.3.5"
+  }
+}

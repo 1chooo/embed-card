@@ -1,0 +1,22 @@
+{
+  "name": "embed-card-example-svelte-vite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
+  },
+  "dependencies": {
+    "embed-card": "0.1.2"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.1.0",
+    "svelte": "^5.28.1",
+    "svelte-check": "^4.2.1",
+    "typescript": "~5.9.3",
+    "vite": "^6.3.5"
+  }
+}

@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-description: Install the package, render your first card, and understand the workspace layout.
+description: Install the package, render your first card, clone a starter example, and understand the workspace layout.
 ---
 
 # Getting Started
@@ -9,6 +9,12 @@ description: Install the package, render your first card, and understand the wor
 
 ```bash
 pnpm add embed-card
+```
+
+To match the version this documentation is written against:
+
+```bash
+pnpm add embed-card@0.1.2
 ```
 
 ## React usage
@@ -42,13 +48,49 @@ export function BrandedArticleEmbed() {
 }
 ```
 
+## Starter projects (full apps)
+
+The repository ships **complete minimal apps** under `examples/`, similar in spirit to the [Next.js examples collection](https://github.com/vercel/next.js/tree/canary/examples). Each folder is a standalone project you can copy or clone:
+
+| Folder | Stack |
+| --- | --- |
+| `examples/next-app` | Next.js (App Router) + `EmbedCard` |
+| `examples/vite-react` | Vite + React + `EmbedCard` |
+| `examples/vue-vite` | Vite + Vue + `<embed-card>` via `embed-card/web-component` |
+| `examples/svelte-vite` | Vite + Svelte + `<embed-card>` |
+| `examples/vanilla-vite` | Vite + TypeScript + `<embed-card>` |
+
+From the monorepo root, after `pnpm install`, you can run checks that include every example (`pnpm build`, `pnpm typecheck`). To run one example’s dev server on its own:
+
+```bash
+cd examples/next-app   # or another folder
+pnpm install
+pnpm dev
+```
+
+To copy a single example out of the repo (requires [degit](https://github.com/Rich-Harris/degit)):
+
+```bash
+npx degit 1chooo/embed-card/examples/next-app my-embed-app
+cd my-embed-app
+pnpm install
+pnpm dev
+```
+
+Browse the same paths on GitHub: [github.com/1chooo/embed-card/tree/main/examples](https://github.com/1chooo/embed-card/tree/main/examples).
+
 ## Repo layout
 
 ```txt
 apps/
-  web/   -> docs site + interactive playground
+  web/          -> docs site + interactive playground
 packages/
-  embed-card/ -> publishable library
-  ui/         -> shared shadcn/ui components
-examples/     -> copy-paste snippets for frameworks
+  embed-card/   -> publishable library
+  ui/           -> shared UI (internal to this monorepo)
+examples/
+  next-app/     -> Next.js starter
+  vite-react/   -> Vite + React starter
+  vue-vite/     -> Vite + Vue starter
+  svelte-vite/  -> Vite + Svelte starter
+  vanilla-vite/ -> Vite + vanilla TS starter
 ```

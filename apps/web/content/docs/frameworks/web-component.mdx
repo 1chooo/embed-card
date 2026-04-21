@@ -30,6 +30,10 @@ Then use it anywhere HTML is allowed:
 - CMS-driven frontends rendering HTML fragments
 - Plain JS projects that still want the package logic
 
+## Runnable examples
+
+Starter apps that call `registerEmbedCard()` and render `<embed-card>` are in [`examples/vue-vite`](https://github.com/1chooo/embed-card/tree/main/examples/vue-vite), [`examples/svelte-vite`](https://github.com/1chooo/embed-card/tree/main/examples/svelte-vite), and [`examples/vanilla-vite`](https://github.com/1chooo/embed-card/tree/main/examples/vanilla-vite). See [Getting Started](../getting-started#starter-projects-full-apps) for how to run or copy them.
+
 ## Reddit inside the shadow root
 
 For Reddit thread URLs, the custom element shows a skeleton first, then **hydrates** the shadow tree with the same JSON-driven card as React: it `fetch`es the public `.json` endpoint and replaces the mount region with markup built in the component (no `redditmedia` iframe).
