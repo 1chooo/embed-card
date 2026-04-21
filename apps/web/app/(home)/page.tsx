@@ -23,8 +23,7 @@ export default function HomePage() {
           </div>
           <div className="space-y-4">
             <h1 className="text-balance text-4xl font-semibold tracking-[-0.06em] sm:text-5xl lg:text-6xl">
-              Turn links into embed cards with a single component—docs and a
-              live playground ship from this Next.js app.
+              Turn links into embed cards with a single component
             </h1>
             <p className="max-w-2xl text-lg leading-8 text-fd-muted-foreground">
               Stop hand-rolling a different embed component for every provider.
