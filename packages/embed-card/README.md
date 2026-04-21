@@ -66,7 +66,7 @@ const embed = resolveEmbed("https://x.com/1chooo___/status/2028573993972969585")
 
 - YouTube
 - X / Twitter
-- Reddit
+- Reddit (browser JSON thread preview, not an iframe embed)
 - Google Maps
 - Vimeo
 - Fallback link preview

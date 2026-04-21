@@ -168,21 +168,15 @@ const redditProvider: EmbedProvider = {
       return null
     }
 
-    const embedUrl = new URL(`https://www.redditmedia.com${url.pathname}`)
-    embedUrl.searchParams.set("ref_source", "embed")
-    embedUrl.searchParams.set("embed", "true")
+    const postUrl = url.toString().replace(/\/$/, "")
 
     return createResolvedEmbed(url, redditProvider, {
       title: "Reddit thread",
       description:
-        "A lightweight Reddit thread preview that keeps the discussion readable inside your layout.",
+        "Thread metadata loads in the browser from Reddit’s public JSON API and renders as a compact card.",
       renderer: {
-        type: "iframe",
-        src: embedUrl.toString(),
-        title: "Embedded Reddit thread",
-        aspectRatio: "4 / 3",
-        minHeight: 520,
-        referrerPolicy: "strict-origin-when-cross-origin",
+        type: "reddit_client",
+        postUrl,
       },
     })
   },

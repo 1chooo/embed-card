@@ -29,3 +29,8 @@ Then use it anywhere HTML is allowed:
 - Svelte or Astro pages with isolated embeds
 - CMS-driven frontends rendering HTML fragments
 - Plain JS projects that still want the package logic
+
+## Reddit inside the shadow root
+
+For Reddit thread URLs, the custom element shows a skeleton first, then **hydrates** the shadow tree with the same JSON-driven card as React: it `fetch`es the public `.json` endpoint and replaces the mount region with markup built in the component (no `redditmedia` iframe).
+

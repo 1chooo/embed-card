@@ -21,7 +21,7 @@ examples/     -> framework usage snippets
 - `registerEmbedCard()` for web component usage
 - `resolveEmbed()` and provider helpers for manual rendering
 
-Built-in providers currently include YouTube, X / Twitter, Reddit, Vimeo, Google Maps, plus a link-preview fallback.
+Built-in providers currently include YouTube, X / Twitter, Reddit (JSON thread preview in the browser), Vimeo, Google Maps, plus a link-preview fallback.
 
 ## Commands
 

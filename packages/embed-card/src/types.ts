@@ -41,10 +41,17 @@ export interface InvalidEmbedRenderer {
   message: string
 }
 
+export interface RedditClientEmbedRenderer {
+  type: "reddit_client"
+  /** Canonical thread URL used for `fetch(url + ".json")` (no trailing slash). */
+  postUrl: string
+}
+
 export type EmbedRenderer =
   | IframeEmbedRenderer
   | LinkEmbedRenderer
   | InvalidEmbedRenderer
+  | RedditClientEmbedRenderer
 
 export interface ResolvedEmbed {
   provider: string

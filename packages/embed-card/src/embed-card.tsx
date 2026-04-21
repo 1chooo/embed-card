@@ -1,5 +1,8 @@
+"use client"
+
 import type { CSSProperties, HTMLAttributes } from "react"
 
+import { RedditEmbedPreview } from "./reddit-embed"
 import { resolveEmbed } from "./resolve"
 import { createThemeVariables } from "./theme"
 import type { EmbedCardTheme, EmbedProvider } from "./types"
@@ -69,6 +72,7 @@ export function EmbedCard({
   ...props
 }: EmbedCardProps) {
   const resolved = resolveEmbed(url, { providers })
+  const isRedditClient = resolved.renderer.type === "reddit_client"
   const themeVars = createThemeVariables({
     accentColor: resolved.accentColor,
     ...theme,
@@ -114,17 +118,19 @@ export function EmbedCard({
           >
             {resolved.providerLabel}
           </span>
-          <h3
-            style={{
-              margin: 0,
-              fontSize: "1.25rem",
-              lineHeight: 1.15,
-              fontWeight: 700,
-              overflowWrap: "anywhere",
-            }}
-          >
-            {resolved.title}
-          </h3>
+          {!isRedditClient ? (
+            <h3
+              style={{
+                margin: 0,
+                fontSize: "1.25rem",
+                lineHeight: 1.15,
+                fontWeight: 700,
+                overflowWrap: "anywhere",
+              }}
+            >
+              {resolved.title}
+            </h3>
+          ) : null}
         </div>
         <span
           style={{
@@ -146,16 +152,18 @@ export function EmbedCard({
         </span>
       </header>
 
-      <p
-        style={{
-          margin: 0,
-          color: "var(--embed-card-muted)",
-          lineHeight: 1.6,
-          fontSize: "0.96rem",
-        }}
-      >
-        {resolved.description}
-      </p>
+      {!isRedditClient ? (
+        <p
+          style={{
+            margin: 0,
+            color: "var(--embed-card-muted)",
+            lineHeight: 1.6,
+            fontSize: "0.96rem",
+          }}
+        >
+          {resolved.description}
+        </p>
+      ) : null}
 
       {resolved.renderer.type === "iframe" ? (
         <div
@@ -177,6 +185,19 @@ export function EmbedCard({
             style={iframeStyle}
             title={resolved.renderer.title}
           />
+        </div>
+      ) : null}
+
+      {resolved.renderer.type === "reddit_client" ? (
+        <div
+          style={{
+            ...previewStyle,
+            minHeight: "280px",
+            padding: 0,
+            background: "#ffffff",
+          }}
+        >
+          <RedditEmbedPreview key={resolved.renderer.postUrl} postUrl={resolved.renderer.postUrl} />
         </div>
       ) : null}
 

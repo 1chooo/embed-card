@@ -1,6 +1,8 @@
+import { fetchRedditPost } from "./reddit-data"
+import { buildRedditCardElement } from "./reddit-shadow-dom"
 import { resolveEmbed } from "./resolve"
 import { createThemeVariables, variablesToInlineStyle } from "./theme"
-import type { EmbedCardTheme } from "./types"
+import type { EmbedCardTheme, ResolvedEmbed } from "./types"
 
 function escapeHtml(value: string): string {
   return value
@@ -136,9 +138,7 @@ function getThemeFromAttributes(element: HTMLElement): EmbedCardTheme {
   }
 }
 
-function renderPreview(url: string): string {
-  const resolved = resolveEmbed(url)
-
+function renderPreview(resolved: ResolvedEmbed): string {
   if (resolved.renderer.type === "iframe") {
     const size = [
       `aspect-ratio:${resolved.renderer.aspectRatio ?? "16 / 9"}`,
@@ -174,6 +174,18 @@ function renderPreview(url: string): string {
     `
   }
 
+  if (resolved.renderer.type === "reddit_client") {
+    return `
+      <div class="preview" part="preview" style="min-height:280px;padding:0;background:#fff;">
+        <div data-reddit-mount style="min-height:260px;padding:1.5rem;">
+          <div style="height:10px;width:33%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 55%,transparent);margin-bottom:10px"></div>
+          <div style="height:14px;width:75%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 45%,transparent);margin-bottom:10px"></div>
+          <div style="height:14px;width:50%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 35%,transparent)"></div>
+        </div>
+      </div>
+    `
+  }
+
   return `
     <div class="preview invalid" part="invalid">
       ${escapeHtml(resolved.renderer.message)}
@@ -181,7 +193,29 @@ function renderPreview(url: string): string {
   `
 }
 
+function renderHeaderAndDescription(resolved: ResolvedEmbed): string {
+  const isReddit = resolved.renderer.type === "reddit_client"
+  const titleHtml = isReddit
+    ? ""
+    : `<h3 class="title">${escapeHtml(resolved.title)}</h3>`
+  const descHtml = isReddit
+    ? ""
+    : `<p class="description">${escapeHtml(resolved.description)}</p>`
+  return `
+        <div class="header" part="header">
+          <div>
+            <span class="eyebrow">${escapeHtml(resolved.providerLabel)}</span>
+            ${titleHtml}
+          </div>
+          <span class="badge">${escapeHtml(resolved.site)}</span>
+        </div>
+        ${descHtml}
+  `
+}
+
 export class EmbedCardElement extends HTMLElement {
+  private redditHydrateAbort: AbortController | null = null
+
   static observedAttributes = [
     "url",
     "accent-color",
@@ -217,18 +251,14 @@ export class EmbedCardElement extends HTMLElement {
       ...getThemeFromAttributes(this),
     })
 
+    this.redditHydrateAbort?.abort()
+    this.redditHydrateAbort = null
+
     this.shadowRoot.innerHTML = `
       <style>${componentStyles}</style>
       <article class="root" part="root" data-provider="${escapeHtml(resolved.provider)}" style="${variablesToInlineStyle(variables)}">
-        <div class="header" part="header">
-          <div>
-            <span class="eyebrow">${escapeHtml(resolved.providerLabel)}</span>
-            <h3 class="title">${escapeHtml(resolved.title)}</h3>
-          </div>
-          <span class="badge">${escapeHtml(resolved.site)}</span>
-        </div>
-        <p class="description">${escapeHtml(resolved.description)}</p>
-        ${renderPreview(url)}
+        ${renderHeaderAndDescription(resolved)}
+        ${renderPreview(resolved)}
         <div class="footer" part="footer">
           <span class="muted">${escapeHtml(resolved.displayUrl)}</span>
           ${
@@ -239,6 +269,55 @@ export class EmbedCardElement extends HTMLElement {
         </div>
       </article>
     `
+
+    this.scheduleRedditHydration(resolved)
+  }
+
+  private scheduleRedditHydration(resolved: ResolvedEmbed): void {
+    if (resolved.renderer.type !== "reddit_client") {
+      return
+    }
+
+    const ac = new AbortController()
+    this.redditHydrateAbort = ac
+    const postUrl = resolved.renderer.postUrl
+    const root = this.shadowRoot
+    if (!root) {
+      return
+    }
+
+    queueMicrotask(() => {
+      void this.hydrateRedditPost(root, postUrl, ac)
+    })
+  }
+
+  private async hydrateRedditPost(
+    root: ShadowRoot,
+    postUrl: string,
+    ac: AbortController
+  ): Promise<void> {
+    const mount = root.querySelector("[data-reddit-mount]")
+    if (!(mount instanceof HTMLElement)) {
+      return
+    }
+
+    const post = await fetchRedditPost(postUrl, { signal: ac.signal })
+    if (ac.signal.aborted) {
+      return
+    }
+
+    if (!post) {
+      mount.replaceChildren()
+      mount.style.padding = "2rem"
+      mount.style.textAlign = "center"
+      mount.style.color = "#787c7e"
+      mount.style.fontSize = "0.9rem"
+      mount.textContent = "Post unavailable."
+      return
+    }
+
+    const card = buildRedditCardElement(root.ownerDocument, post)
+    mount.replaceChildren(card)
   }
 }
 
