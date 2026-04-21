@@ -3,51 +3,17 @@
 import { useCallback, useMemo, useState, type ReactNode } from "react"
 
 import type { EmbedCardTheme } from "embed-card"
-import { EmbedCard } from "embed-card"
+import { EMBED_CARD_DEFAULT_SHADOW, EmbedCard } from "embed-card"
 
+import {
+  DEFAULTS,
+  buildSnippet,
+  hexToRgb,
+  mixTowardWhite,
+  pillClassName,
+  rgbaAlpha,
+} from "@/components/embed-playground-shared"
 import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
-
-function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-  const normalized = hex.replace("#", "")
-  if (normalized.length !== 6) return null
-  const n = Number.parseInt(normalized, 16)
-  if (!Number.isFinite(n)) return null
-  return {
-    r: (n >> 16) & 255,
-    g: (n >> 8) & 255,
-    b: n & 255,
-  }
-}
-
-function mixTowardWhite(
-  hex: string,
-  /** 0 = white, 1 = full accent */
-  amount: number
-): string {
-  const rgb = hexToRgb(hex)
-  if (!rgb) return "#ffffff"
-  const t = Math.min(1, Math.max(0, amount))
-  const mix = (c: number) => Math.round(255 + (c - 255) * t)
-  return `rgb(${mix(rgb.r)}, ${mix(rgb.g)}, ${mix(rgb.b)})`
-}
-
-function rgbaAlpha(cssColor: string): number | null {
-  const m = cssColor.match(
-    /rgba\s*\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*([\d.]+)\s*\)/i
-  )
-  if (!m?.[1]) return null
-  return Math.round(Number.parseFloat(m[1]) * 100)
-}
-
-/** Aligned with Reset / Copy code in the Options/Controls bar (rounded-md, 11px). */
-function pillClassName(isActive: boolean): string {
-  return [
-    "inline-flex min-h-0 items-center justify-center rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium transition active:scale-[0.98]",
-    isActive
-      ? "bg-fd-primary text-fd-primary-foreground hover:opacity-90"
-      : "text-fd-muted-foreground hover:bg-fd-muted/50 hover:text-fd-foreground",
-  ].join(" ")
-}
 
 function ControlRow({
   label,
@@ -128,62 +94,18 @@ function SliderField({
   )
 }
 
-const DEFAULTS = {
-  accentHex: "#e11d48",
-  radius: 28,
-  borderAlpha: 22,
-  shadowAlpha: 0,
-  shadowSpread: 72,
-  bgTint: 8,
-  mutedStrength: 40,
-}
-
-function buildSnippet(url: string, theme: EmbedCardTheme): string {
-  const r = theme.radius
-  const radiusLine =
-    typeof r === "number"
-      ? `        radius: ${r},`
-      : `        radius: ${JSON.stringify(r ?? "24px")},`
-
-  return `import { EmbedCard } from "embed-card"
-
-export function Example() {
-  return (
-    <EmbedCard
-      url={${JSON.stringify(url)}}
-      theme={{
-        accentColor: ${JSON.stringify(theme.accentColor ?? "#111827")},
-        background: ${JSON.stringify(theme.background ?? "rgba(255,255,255,0.98)")},
-        borderColor: ${JSON.stringify(theme.borderColor ?? "rgba(15,23,42,0.12)")},
-        mutedColor: ${JSON.stringify(theme.mutedColor ?? "rgba(15,23,42,0.62)")},
-${radiusLine}
-        shadow: ${JSON.stringify(theme.shadow ?? "none")},
-      }}
-    />
-  )
-}`
-}
-
 export type EmbedPlaygroundProps = {
   /** Negative margin for full-bleed inside docs prose (default: true). */
   bleed?: boolean
-  /** Whether the code snippet starts expanded (full mode toggle only). */
+  /** Whether the code snippet starts expanded. */
   defaultSnippetOpen?: boolean
-  /** `simple`: URL + presets + snippet. `full`: adds fine-tune sliders (docs page). */
-  mode?: "simple" | "full"
 }
 
 export function EmbedPlayground({
   bleed = true,
   defaultSnippetOpen = true,
-  mode = "full",
 }: EmbedPlaygroundProps) {
-  const isFull = mode === "full"
-
   const [url, setUrl] = useState<string>(sampleEmbeds[0].url)
-  const [simplePresetId, setSimplePresetId] = useState<
-    (typeof demoThemes)[number]["id"]
-  >(demoThemes[0].id)
 
   const [accentHex, setAccentHex] = useState(DEFAULTS.accentHex)
   const [radius, setRadius] = useState(DEFAULTS.radius)
@@ -196,13 +118,7 @@ export function EmbedPlayground({
   const [copied, setCopied] = useState(false)
   const [snippetOpen, setSnippetOpen] = useState(defaultSnippetOpen)
 
-  const simpleTheme = useMemo((): EmbedCardTheme => {
-    const entry =
-      demoThemes.find((d) => d.id === simplePresetId) ?? demoThemes[0]
-    return { ...entry.theme }
-  }, [simplePresetId])
-
-  const fullTheme = useMemo(() => {
+  const cardTheme = useMemo(() => {
     const rgb = hexToRgb(accentHex)
     const border = rgb
       ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${borderAlpha / 100})`
@@ -222,7 +138,7 @@ export function EmbedPlayground({
       borderColor: border,
       mutedColor: muted,
       radius,
-      shadow,
+      ...(shadow !== EMBED_CARD_DEFAULT_SHADOW ? { shadow } : {}),
     }
   }, [
     accentHex,
@@ -233,8 +149,6 @@ export function EmbedPlayground({
     bgTint,
     mutedStrength,
   ])
-
-  const cardTheme = isFull ? fullTheme : simpleTheme
 
   const snippet = useMemo(
     () => buildSnippet(url, cardTheme),
@@ -263,23 +177,20 @@ export function EmbedPlayground({
     setActivePresetId(null)
   }, [])
 
-  const resetSimple = useCallback(() => {
-    setUrl(sampleEmbeds[0].url)
-    setSimplePresetId(demoThemes[0].id)
-  }, [])
-
   const applyDemoPresetFull = useCallback(
     (id: (typeof demoThemes)[number]["id"]) => {
       const entry = demoThemes.find((d) => d.id === id)
       if (!entry) return
-      const { theme: t } = entry
-      setAccentHex(t.accentColor)
+      const t: EmbedCardTheme = entry.theme
+      setAccentHex(t.accentColor ?? DEFAULTS.accentHex)
       setRadius(typeof t.radius === "number" ? t.radius : DEFAULTS.radius)
-      const ba = rgbaAlpha(t.borderColor)
+      const ba = rgbaAlpha(
+        t.borderColor ?? "rgba(15, 23, 42, 0.12)"
+      )
       setBorderAlpha(ba ?? DEFAULTS.borderAlpha)
-      const sa = rgbaAlpha(t.shadow)
+      const sa = t.shadow != null ? rgbaAlpha(t.shadow) : null
       setShadowAlpha(sa ?? DEFAULTS.shadowAlpha)
-      const blurMatch = t.shadow.match(/0\s+[\d.]+px\s+(\d+)px\s+rgba/i)
+      const blurMatch = t.shadow?.match(/0\s+[\d.]+px\s+(\d+)px\s+rgba/i)
       if (blurMatch?.[1])
         setShadowSpread(Number.parseInt(blurMatch[1], 10))
       setActivePresetId(id)
@@ -313,56 +224,30 @@ export function EmbedPlayground({
       <aside
         className={[
           "flex w-full shrink-0 flex-col gap-0 border-t border-fd-border bg-fd-background lg:w-[min(100%,400px)] lg:border-t-0 lg:border-l lg:overflow-y-auto lg:self-start",
-          isFull
-            ? "lg:max-h-[min(720px,calc(100dvh-8rem))] lg:sticky lg:top-28"
-            : "",
+          "lg:max-h-[min(720px,calc(100dvh-8rem))] lg:sticky lg:top-28",
         ].join(" ")}
       >
-        {isFull ? (
-          <div className="flex items-center justify-between gap-2 border-b border-fd-border px-4 py-3 sm:px-5">
-            <span className="text-xs font-semibold text-fd-foreground">
-              Controls
-            </span>
-            <div className="flex shrink-0 gap-2">
-              <button
-                className="rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
-                onClick={resetFull}
-                type="button"
-              >
-                Reset
-              </button>
-              <button
-                className="rounded-md border border-fd-border bg-fd-primary px-2.5 py-1.5 text-[11px] font-medium text-fd-primary-foreground transition hover:opacity-90"
-                onClick={copySnippet}
-                type="button"
-              >
-                {copied ? "Copied" : "Copy code"}
-              </button>
-            </div>
+        <div className="flex items-center justify-between gap-2 border-b border-fd-border px-4 py-3 sm:px-5">
+          <span className="text-xs font-semibold text-fd-foreground">
+            Controls
+          </span>
+          <div className="flex shrink-0 gap-2">
+            <button
+              className="rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
+              onClick={resetFull}
+              type="button"
+            >
+              Reset
+            </button>
+            <button
+              className="rounded-md border border-fd-border bg-fd-primary px-2.5 py-1.5 text-[11px] font-medium text-fd-primary-foreground transition hover:opacity-90"
+              onClick={copySnippet}
+              type="button"
+            >
+              {copied ? "Copied" : "Copy code"}
+            </button>
           </div>
-        ) : (
-          <div className="flex items-center justify-between gap-2 border-b border-fd-border px-4 py-3 sm:px-5">
-            <span className="text-xs font-semibold text-fd-foreground">
-              Options
-            </span>
-            <div className="flex shrink-0 gap-2">
-              <button
-                className="rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
-                onClick={resetSimple}
-                type="button"
-              >
-                Reset
-              </button>
-              <button
-                className="rounded-md border border-fd-border bg-fd-primary px-2.5 py-1.5 text-[11px] font-medium text-fd-primary-foreground transition hover:opacity-90"
-                onClick={copySnippet}
-                type="button"
-              >
-                {copied ? "Copied" : "Copy code"}
-              </button>
-            </div>
-          </div>
-        )}
+        </div>
 
         <div className="space-y-8 px-4 py-6 sm:px-5">
           <div>
@@ -373,7 +258,7 @@ export function EmbedPlayground({
                 className="mt-1.5 h-10 w-full rounded-md border border-fd-border bg-fd-background px-3 font-mono text-xs text-fd-foreground outline-none transition placeholder:text-fd-muted-foreground focus-visible:border-fd-primary focus-visible:ring-2 focus-visible:ring-fd-primary/25"
                 onChange={(e) => {
                   setUrl(e.target.value)
-                  if (isFull) setActivePresetId(null)
+                  setActivePresetId(null)
                 }}
                 placeholder="https://..."
                 spellCheck={false}
@@ -390,7 +275,7 @@ export function EmbedPlayground({
                   key={sample.label}
                   onClick={() => {
                     setUrl(sample.url)
-                    if (isFull) setActivePresetId(null)
+                    setActivePresetId(null)
                   }}
                   type="button"
                 >
@@ -405,23 +290,14 @@ export function EmbedPlayground({
               Theme presets
             </p>
             <p className="mt-1 text-[11px] text-fd-muted-foreground">
-              {isFull
-                ? "Jump to a palette, then fine-tune with the sliders below."
-                : "Pick a ready-made card theme."}
+              Jump to a palette, then fine-tune with the sliders below.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {demoThemes.map((preset) => (
                 <button
-                  className={pillClassName(
-                    isFull
-                      ? activePresetId === preset.id
-                      : simplePresetId === preset.id
-                  )}
+                  className={pillClassName(activePresetId === preset.id)}
                   key={preset.id}
-                  onClick={() => {
-                    if (isFull) applyDemoPresetFull(preset.id)
-                    else setSimplePresetId(preset.id)
-                  }}
+                  onClick={() => applyDemoPresetFull(preset.id)}
                   type="button"
                 >
                   {preset.label}
@@ -430,154 +306,139 @@ export function EmbedPlayground({
             </div>
           </div>
 
-          {isFull ? (
-            <div className="space-y-7 border-t border-fd-border pt-8">
-              <p className="text-xs font-semibold text-fd-foreground">
-                Fine-tune
-              </p>
+          <div className="space-y-7 border-t border-fd-border pt-8">
+            <p className="text-xs font-semibold text-fd-foreground">
+              Fine-tune
+            </p>
 
-              <ControlRow label="Accent" value={accentHex} hint="Picker + presets above.">
-                <input
-                  aria-label="Accent color"
-                  className="h-10 w-full max-w-[220px] cursor-pointer rounded-md border border-fd-border bg-fd-background p-1"
-                  onChange={(e) => {
-                    setAccentHex(e.target.value)
-                    setActivePresetId(null)
-                  }}
-                  type="color"
-                  value={accentHex}
-                />
-              </ControlRow>
+            <ControlRow label="Accent" value={accentHex} hint="Picker + presets above.">
+              <input
+                aria-label="Accent color"
+                className="h-10 w-full max-w-[220px] cursor-pointer rounded-md border border-fd-border bg-fd-background p-1"
+                onChange={(e) => {
+                  setAccentHex(e.target.value)
+                  setActivePresetId(null)
+                }}
+                type="color"
+                value={accentHex}
+              />
+            </ControlRow>
 
-              <ControlRow label="Radius" value={`${radius}px`} hint="Card corner radius.">
-                <SliderField
-                  aria-label="Radius"
-                  max={48}
-                  min={8}
-                  onChange={(v) => {
-                    setRadius(v)
-                    setActivePresetId(null)
-                  }}
-                  value={radius}
-                />
-              </ControlRow>
+            <ControlRow label="Radius" value={`${radius}px`} hint="Card corner radius.">
+              <SliderField
+                aria-label="Radius"
+                max={48}
+                min={8}
+                onChange={(v) => {
+                  setRadius(v)
+                  setActivePresetId(null)
+                }}
+                value={radius}
+              />
+            </ControlRow>
 
-              <ControlRow
-                label="Border blend"
-                value={(borderAlpha / 100).toFixed(2)}
-                hint="Accent mixed into the border."
-              >
-                <SliderField
-                  aria-label="Border blend"
-                  max={60}
-                  min={4}
-                  onChange={(v) => {
-                    setBorderAlpha(v)
-                    setActivePresetId(null)
-                  }}
-                  value={borderAlpha}
-                />
-              </ControlRow>
+            <ControlRow
+              label="Border blend"
+              value={(borderAlpha / 100).toFixed(2)}
+              hint="Accent mixed into the border."
+            >
+              <SliderField
+                aria-label="Border blend"
+                max={60}
+                min={4}
+                onChange={(v) => {
+                  setBorderAlpha(v)
+                  setActivePresetId(null)
+                }}
+                value={borderAlpha}
+              />
+            </ControlRow>
 
-              <ControlRow
-                label="Shadow depth"
-                value={(shadowAlpha / 100).toFixed(2)}
-                hint="Glow strength under the card."
-              >
-                <SliderField
-                  aria-label="Shadow depth"
-                  max={45}
-                  min={0}
-                  onChange={(v) => {
-                    setShadowAlpha(v)
-                    setActivePresetId(null)
-                  }}
-                  value={shadowAlpha}
-                />
-              </ControlRow>
+            <ControlRow
+              label="Shadow depth"
+              value={(shadowAlpha / 100).toFixed(2)}
+              hint="Glow strength under the card."
+            >
+              <SliderField
+                aria-label="Shadow depth"
+                max={45}
+                min={0}
+                onChange={(v) => {
+                  setShadowAlpha(v)
+                  setActivePresetId(null)
+                }}
+                value={shadowAlpha}
+              />
+            </ControlRow>
 
-              <ControlRow
-                label="Shadow reach"
-                value={`${shadowSpread}px`}
-                hint="How far the shadow spreads."
-              >
-                <SliderField
-                  aria-label="Shadow reach"
-                  max={120}
-                  min={32}
-                  onChange={(v) => {
-                    setShadowSpread(v)
-                    setActivePresetId(null)
-                  }}
-                  value={shadowSpread}
-                />
-              </ControlRow>
+            <ControlRow
+              label="Shadow reach"
+              value={`${shadowSpread}px`}
+              hint="How far the shadow spreads."
+            >
+              <SliderField
+                aria-label="Shadow reach"
+                max={120}
+                min={32}
+                onChange={(v) => {
+                  setShadowSpread(v)
+                  setActivePresetId(null)
+                }}
+                value={shadowSpread}
+              />
+            </ControlRow>
 
-              <ControlRow
-                label="Surface tint"
-                value={(bgTint / 100).toFixed(2)}
-                hint="Pull the card surface toward the accent."
-              >
-                <SliderField
-                  aria-label="Surface tint"
-                  max={28}
-                  min={0}
-                  onChange={(v) => {
-                    setBgTint(v)
-                    setActivePresetId(null)
-                  }}
-                  value={bgTint}
-                />
-              </ControlRow>
+            <ControlRow
+              label="Surface tint"
+              value={(bgTint / 100).toFixed(2)}
+              hint="Pull the card surface toward the accent."
+            >
+              <SliderField
+                aria-label="Surface tint"
+                max={28}
+                min={0}
+                onChange={(v) => {
+                  setBgTint(v)
+                  setActivePresetId(null)
+                }}
+                value={bgTint}
+              />
+            </ControlRow>
 
-              <ControlRow
-                label="Muted text"
-                value={String(mutedStrength)}
-                hint="How much the body text leans away from the accent."
-              >
-                <SliderField
-                  aria-label="Muted text strength"
-                  max={80}
-                  min={12}
-                  onChange={(v) => {
-                    setMutedStrength(v)
-                    setActivePresetId(null)
-                  }}
-                  value={mutedStrength}
-                />
-              </ControlRow>
-            </div>
-          ) : null}
+            <ControlRow
+              label="Muted text"
+              value={String(mutedStrength)}
+              hint="How much the body text leans away from the accent."
+            >
+              <SliderField
+                aria-label="Muted text strength"
+                max={80}
+                min={12}
+                onChange={(v) => {
+                  setMutedStrength(v)
+                  setActivePresetId(null)
+                }}
+                value={mutedStrength}
+              />
+            </ControlRow>
+          </div>
 
           <div className="border-t border-fd-border pt-6">
-            {isFull ? (
-              <>
-                <button
-                  className="flex w-full items-center justify-between gap-2 rounded-md py-1 text-left text-xs font-semibold text-fd-foreground transition hover:text-fd-primary"
-                  onClick={() => setSnippetOpen((o) => !o)}
-                  type="button"
-                >
-                  <span>React snippet</span>
-                  <span className="text-[11px] font-normal text-fd-muted-foreground">
-                    {snippetOpen ? "Hide" : "Show"}
-                  </span>
-                </button>
-                {snippetOpen ? (
-                  <pre className="mt-3 max-h-52 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 p-3 text-[11px] leading-relaxed text-fd-foreground">
-                    <code>{snippet}</code>
-                  </pre>
-                ) : null}
-              </>
-            ) : (
-              <>
-                <p className="text-xs font-semibold text-fd-foreground">
-                  React snippet
-                </p>
-                <pre className="mt-3 max-h-56 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 p-3 text-[11px] leading-relaxed text-fd-foreground">
-                  <code>{snippet}</code>
-                </pre>
-              </>
-            )}
+            <button
+              className="flex w-full items-center justify-between gap-2 rounded-md py-1 text-left text-xs font-semibold text-fd-foreground transition hover:text-fd-primary"
+              onClick={() => setSnippetOpen((o) => !o)}
+              type="button"
+            >
+              <span>React snippet</span>
+              <span className="text-[11px] font-normal text-fd-muted-foreground">
+                {snippetOpen ? "Hide" : "Show"}
+              </span>
+            </button>
+            {snippetOpen ? (
+              <pre className="mt-3 max-h-52 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 p-3 text-[11px] leading-relaxed text-fd-foreground">
+                <code>{snippet}</code>
+              </pre>
+            ) : null}
           </div>
         </div>
       </aside>

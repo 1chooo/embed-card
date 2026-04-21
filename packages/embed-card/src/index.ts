@@ -11,7 +11,11 @@ export { RedditEmbedPreview } from "./reddit-embed"
 export type { RedditEmbedPreviewProps } from "./reddit-embed"
 export { createEmbedProvider, defaultProviders } from "./providers"
 export { resolveEmbed } from "./resolve"
-export { createThemeVariables, variablesToInlineStyle } from "./theme"
+export {
+  createThemeVariables,
+  EMBED_CARD_DEFAULT_SHADOW,
+  variablesToInlineStyle,
+} from "./theme"
 export { EmbedCardElement, registerEmbedCard } from "./web-component"
 export type {
   EmbedCardTheme,

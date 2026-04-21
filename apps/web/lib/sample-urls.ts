@@ -31,7 +31,6 @@ export const demoThemes = [
       borderColor: "rgba(225,29,72,0.18)",
       mutedColor: "rgba(17,24,39,0.62)",
       radius: 28,
-      shadow: "none",
     },
   },
   {
@@ -43,7 +42,6 @@ export const demoThemes = [
       borderColor: "rgba(29,78,216,0.18)",
       mutedColor: "rgba(30,41,59,0.7)",
       radius: 24,
-      shadow: "none",
     },
   },
   {
@@ -55,7 +53,6 @@ export const demoThemes = [
       borderColor: "rgba(4,120,87,0.18)",
       mutedColor: "rgba(6,78,59,0.68)",
       radius: 30,
-      shadow: "none",
     },
   },
 ] as const

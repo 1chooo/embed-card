@@ -1,5 +1,8 @@
 import type { EmbedCardTheme } from "./types"
 
+/** Default `theme.shadow` when the field is omitted. Single source of truth for docs and tools. */
+export const EMBED_CARD_DEFAULT_SHADOW = "none" as const
+
 export interface EmbedCardCssVariables {
   "--embed-card-accent": string
   "--embed-card-background": string
@@ -17,7 +20,7 @@ const defaultTheme: Required<EmbedCardTheme> = {
   textColor: "#0f172a",
   mutedColor: "rgba(15, 23, 42, 0.62)",
   radius: "24px",
-  shadow: "none",
+  shadow: EMBED_CARD_DEFAULT_SHADOW,
 }
 
 function toSize(value: number | string | undefined, fallback: string): string {

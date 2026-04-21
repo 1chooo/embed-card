@@ -23,6 +23,8 @@ export function ArticleEmbed() {
 
 ## Theme the card
 
+`theme` fields are optional, including `shadow`. The default is **no** `box-shadow`—only set `theme.shadow` when you want one. The default is exported as `EMBED_CARD_DEFAULT_SHADOW` if you need to compare or reset in app code.
+
 ```tsx
 import { EmbedCard } from "embed-card"
 

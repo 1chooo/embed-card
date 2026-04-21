@@ -31,6 +31,8 @@ export function ArticleEmbed() {
 
 ## Theme the card
 
+`theme` fields are all optional, including `shadow`. If you leave `shadow` out, the package applies **no** drop shadow; pass a string when you want a custom `box-shadow` (for example a soft glow in the accent color).
+
 ```tsx
 import { EmbedCard } from "embed-card"
 
@@ -41,12 +43,26 @@ export function BrandedArticleEmbed() {
       theme={{
         accentColor: "#e11d48",
         radius: 28,
-        shadow: "0 28px 100px rgba(225, 29, 72, 0.18)",
       }}
     />
   )
 }
 ```
+
+With an optional drop shadow (you do not need to pass `shadow: "none"` to disable it—omitting the field is enough):
+
+```tsx
+<EmbedCard
+  url="https://vimeo.com/76979871"
+  theme={{
+    accentColor: "#e11d48",
+    radius: 28,
+    shadow: "0 28px 100px rgba(225, 29, 72, 0.18)",
+  }}
+/>
+```
+
+The no-shadow default is also exported as `EMBED_CARD_DEFAULT_SHADOW` from `embed-card` if you need it in your own theming code.
 
 ## Starter projects (full apps)
 

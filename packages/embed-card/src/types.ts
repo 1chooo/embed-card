@@ -15,6 +15,7 @@ export interface EmbedCardTheme {
   textColor?: string
   mutedColor?: string
   radius?: number | string
+  /** Any valid CSS `box-shadow`. Omit to use the package default (no shadow). */
   shadow?: string
 }
 
