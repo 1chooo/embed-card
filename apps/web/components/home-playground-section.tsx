@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { PanelRight } from "lucide-react"
 
-import { EmbedPlayground } from "@/components/embed-playground"
+import { HomeEmbedPlayground } from "@/components/home-embed-playground"
 
 /** Matches `Reset` / `Copy code` in `embed-playground.tsx` control bars. */
 const btnOutline =
@@ -35,11 +35,7 @@ export function HomePlaygroundSection() {
           </Link>
         </div>
       </div>
-      <EmbedPlayground
-        bleed={false}
-        defaultSnippetOpen={false}
-        mode="simple"
-      />
+      <HomeEmbedPlayground bleed={false} />
     </section>
   )
 }

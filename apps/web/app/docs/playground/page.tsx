@@ -18,7 +18,7 @@ export default function DocsPlaygroundPage() {
         below. The snippet always matches your current settings.
       </DocsDescription>
       <DocsBody>
-        <EmbedPlayground mode="full" />
+        <EmbedPlayground />
       </DocsBody>
     </DocsPage>
   )
