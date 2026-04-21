@@ -32,11 +32,18 @@ const componentStyles = `
     font-family: inherit;
   }
 
-  .header,
-  .footer {
+  .header {
     display: flex;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .header > div:first-child {
+    min-width: 0;
+    flex: 1 1 12rem;
   }
 
   .eyebrow,
@@ -56,6 +63,7 @@ const componentStyles = `
     font-size: 1.25rem;
     line-height: 1.15;
     font-weight: 700;
+    overflow-wrap: anywhere;
   }
 
   .badge {
@@ -77,11 +85,15 @@ const componentStyles = `
     margin: 0;
     line-height: 1.6;
     font-size: 0.96rem;
+    overflow-wrap: anywhere;
   }
 
   .preview {
     position: relative;
     overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     border-radius: calc(var(--embed-card-radius) - 8px);
     border: 1px solid color-mix(in srgb, var(--embed-card-border) 82%, white 18%);
     background: radial-gradient(circle at top, color-mix(in srgb, var(--embed-card-accent) 22%, white 78%), transparent 58%), #ffffff;
@@ -113,8 +125,11 @@ const componentStyles = `
   }
 
   .footer {
+    display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     border-top: 1px solid color-mix(in srgb, var(--embed-card-border) 80%, white 20%);
     padding-top: 0.9rem;
   }
@@ -143,7 +158,7 @@ function renderPreview(resolved: ResolvedEmbed): string {
     const size = [
       `aspect-ratio:${resolved.renderer.aspectRatio ?? "16 / 9"}`,
       resolved.renderer.minHeight
-        ? `min-height:${resolved.renderer.minHeight}px`
+        ? `min-height:min(${resolved.renderer.minHeight}px,90vmin)`
         : "",
     ]
       .filter(Boolean)

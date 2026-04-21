@@ -113,22 +113,22 @@ registerEmbedCard()
           </div>
         </article>
 
-        <article className="min-w-0 rounded-[34px] border border-fd-border/70 bg-gradient-to-br from-white to-white/70 p-5 shadow-[0_28px_90px_rgba(15,23,42,0.08)] dark:from-white/5 dark:to-white/10 sm:p-7">
+        <article className="min-w-0 overflow-x-hidden rounded-[34px] border border-fd-border/70 bg-gradient-to-br from-white to-white/70 p-5 shadow-[0_28px_90px_rgba(15,23,42,0.08)] dark:from-white/5 dark:to-white/10 sm:p-7">
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-            <div className="min-w-0">
+            <div className="min-w-0 pr-1">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-fd-muted-foreground">
                 Preview
               </p>
-              <h3 className="mt-2 text-2xl font-semibold tracking-[-0.04em]">
+              <h3 className="mt-2 text-balance wrap-break-word text-xl font-semibold tracking-[-0.04em] sm:text-2xl">
                 `EmbedCard` rendered from the workspace package
               </h3>
             </div>
-            <div className="shrink-0 self-start rounded-full border border-fd-border/70 bg-white px-3 py-1.5 text-xs font-medium text-fd-muted-foreground dark:bg-white/5 sm:self-auto">
+            <div className="max-w-full shrink-0 self-start rounded-full border border-fd-border/70 bg-white px-3 py-1.5 text-xs font-medium text-fd-muted-foreground dark:bg-white/5 sm:self-auto">
               Theme: {activeTheme.label}
             </div>
           </div>
 
-          <div className="w-full min-w-0 break-words">
+          <div className="isolate w-full min-w-0 max-w-full overflow-x-hidden wrap-break-word">
             <EmbedCard theme={activeTheme.theme} url={url} />
           </div>
         </article>

@@ -159,7 +159,15 @@ function RedditCardLoaded({ post }: { post: RedditPostData }) {
           borderBottom: `1px solid ${borderSoft}`,
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", minWidth: 0 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.2rem",
+            minWidth: 0,
+            flex: "1 1 0%",
+          }}
+        >
           <a
             href={`https://www.reddit.com/r/${post.subreddit}`}
             target="_blank"
@@ -184,7 +192,19 @@ function RedditCardLoaded({ post }: { post: RedditPostData }) {
       </div>
 
       <div style={{ padding: "1rem 1.25rem 0.75rem", flex: 1, minWidth: 0 }}>
-        <a href={postHref} target="_blank" rel="noreferrer" style={{ ...linkBase, fontWeight: 600, fontSize: "0.95rem", lineHeight: 1.35 }}>
+        <a
+          href={postHref}
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            ...linkBase,
+            display: "block",
+            fontWeight: 600,
+            fontSize: "0.95rem",
+            lineHeight: 1.35,
+            overflowWrap: "anywhere",
+          }}
+        >
           {post.title}
         </a>
         {body ? (

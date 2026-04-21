@@ -38,6 +38,9 @@ const rootStyle: CSSProperties = {
 const previewStyle: CSSProperties = {
   position: "relative",
   overflow: "hidden",
+  width: "100%",
+  maxWidth: "100%",
+  minWidth: 0,
   borderRadius: "calc(var(--embed-card-radius) - 8px)",
   border: "1px solid color-mix(in srgb, var(--embed-card-border) 82%, white 18%)",
   background:
@@ -94,6 +97,7 @@ export function EmbedCard({
       <header
         style={{
           display: "flex",
+          flexWrap: "wrap",
           alignItems: "flex-start",
           justifyContent: "space-between",
           gap: "1rem",
@@ -159,6 +163,7 @@ export function EmbedCard({
             color: "var(--embed-card-muted)",
             lineHeight: 1.6,
             fontSize: "0.96rem",
+            overflowWrap: "anywhere",
           }}
         >
           {resolved.description}
@@ -171,7 +176,7 @@ export function EmbedCard({
             ...previewStyle,
             aspectRatio: resolved.renderer.aspectRatio ?? "16 / 9",
             minHeight: resolved.renderer.minHeight
-              ? `${resolved.renderer.minHeight}px`
+              ? `min(${resolved.renderer.minHeight}px, 90vmin)`
               : undefined,
           }}
         >
