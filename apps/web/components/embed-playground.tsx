@@ -39,12 +39,13 @@ function rgbaAlpha(cssColor: string): number | null {
   return Math.round(Number.parseFloat(m[1]) * 100)
 }
 
+/** Aligned with Reset / Copy code in the Options/Controls bar (rounded-md, 11px). */
 function pillClassName(isActive: boolean): string {
   return [
-    "inline-flex min-h-9 items-center rounded-full border px-3 py-1.5 text-xs font-medium transition active:scale-[0.98]",
+    "inline-flex min-h-0 items-center justify-center rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium transition active:scale-[0.98]",
     isActive
-      ? "border-fd-primary bg-fd-primary text-fd-primary-foreground"
-      : "border-fd-border bg-fd-background text-fd-foreground hover:bg-fd-muted/70",
+      ? "bg-fd-primary text-fd-primary-foreground hover:opacity-90"
+      : "text-fd-muted-foreground hover:bg-fd-muted/50 hover:text-fd-foreground",
   ].join(" ")
 }
 
