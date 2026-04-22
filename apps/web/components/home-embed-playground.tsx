@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react"
 
 import type { EmbedCardTheme } from "embed-card"
 import { EmbedCard } from "embed-card"
+import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
 
 import { buildSnippet, pillClassName } from "@/components/embed-playground-shared"
 import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
@@ -145,9 +146,15 @@ export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps)
             <p className="text-xs font-semibold text-fd-foreground">
               React snippet
             </p>
-            <pre className="mt-3 max-h-56 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 p-3 text-[11px] leading-relaxed text-fd-foreground">
-              <code>{snippet}</code>
-            </pre>
+            <DynamicCodeBlock
+              code={snippet}
+              lang="tsx"
+              codeblock={{
+                allowCopy: false,
+                className:
+                  "not-prose my-0 mt-3 max-h-56 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 text-[11px] leading-relaxed text-fd-foreground",
+              }}
+            />
           </div>
         </div>
       </aside>

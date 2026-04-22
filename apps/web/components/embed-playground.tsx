@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState, type ReactNode } from "react"
 
 import type { EmbedCardTheme } from "embed-card"
 import { EMBED_CARD_DEFAULT_SHADOW, EmbedCard } from "embed-card"
+import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
 
 import {
   DEFAULTS,
@@ -435,9 +436,15 @@ export function EmbedPlayground({
               </span>
             </button>
             {snippetOpen ? (
-              <pre className="mt-3 max-h-52 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 p-3 text-[11px] leading-relaxed text-fd-foreground">
-                <code>{snippet}</code>
-              </pre>
+              <DynamicCodeBlock
+                code={snippet}
+                lang="tsx"
+                codeblock={{
+                  allowCopy: false,
+                  className:
+                    "not-prose my-0 mt-3 max-h-52 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 text-[11px] leading-relaxed text-fd-foreground",
+                }}
+              />
             ) : null}
           </div>
         </div>

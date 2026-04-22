@@ -76,7 +76,8 @@ export function Example() {
         background: ${JSON.stringify(theme.background ?? "rgba(255,255,255,0.98)")},
         borderColor: ${JSON.stringify(theme.borderColor ?? "rgba(15,23,42,0.12)")},
         mutedColor: ${JSON.stringify(theme.mutedColor ?? "rgba(15,23,42,0.62)")},
-${radiusLine}${shadowLine}      }}
+${radiusLine}${shadowLine}
+      }}
     />
   )
 }`
