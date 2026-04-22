@@ -21,8 +21,8 @@ export function HomePlaygroundSection() {
             Playground
           </h2>
           <p className="max-w-md text-[13px] leading-relaxed text-fd-muted-foreground">
-            Pick a sample URL and a theme; copy the generated snippet from the
-            card panel.
+            Pick a sample URL and copy the generated snippet from the card
+            panel.
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">

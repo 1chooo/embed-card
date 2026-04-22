@@ -2,36 +2,39 @@
 
 import { useCallback, useMemo, useState } from "react"
 
-import type { EmbedCardTheme } from "embed-card"
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
 
-import { buildSnippet, pillClassName } from "@/components/embed-playground-shared"
-import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
+import { pillClassName } from "@/components/embed-playground-shared"
+import { sampleEmbeds } from "@/lib/sample-urls"
 import { ThemedEmbedCard } from "embed-card/next-themes"
 
 export type HomeEmbedPlaygroundProps = {
+  /** Initial embed URL; visitors can still edit it in the playground. */
+  url?: string
   /** Match docs playground: false = contained card on the marketing page. */
   bleed?: boolean
 }
 
-export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps) {
-  const [url, setUrl] = useState<string>(sampleEmbeds[0].url)
-  const [presetId, setPresetId] = useState<(typeof demoThemes)[number]["id"]>(
-    demoThemes[0].id
+function buildUrlOnlySnippet(embedUrl: string): string {
+  return `import { EmbedCard } from "embed-card"
+
+export function Example() {
+  return (
+    <EmbedCard
+      url={${JSON.stringify(embedUrl)}}
+    />
   )
+}`
+}
+
+export function HomeEmbedPlayground({
+  url: initialUrl = sampleEmbeds[0].url,
+  bleed = false,
+}: HomeEmbedPlaygroundProps) {
+  const [url, setUrl] = useState<string>(initialUrl)
   const [copied, setCopied] = useState(false)
 
-  const cardTheme = useMemo((): EmbedCardTheme => {
-    const entry = demoThemes.find((d) => d.id === presetId) ?? demoThemes[0]
-    return {
-      radius: entry.theme.radius,
-    }
-  }, [presetId])
-
-  const snippet = useMemo(
-    () => buildSnippet(url, cardTheme),
-    [url, cardTheme]
-  )
+  const snippet = useMemo(() => buildUrlOnlySnippet(url), [url])
 
   const copySnippet = useCallback(async () => {
     try {
@@ -44,9 +47,8 @@ export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps)
   }, [snippet])
 
   const reset = useCallback(() => {
-    setUrl(sampleEmbeds[0].url)
-    setPresetId(demoThemes[0].id)
-  }, [])
+    setUrl(initialUrl)
+  }, [initialUrl])
 
   const outerClass = [
     "not-prose flex min-h-0 min-w-0 flex-col border border-fd-border bg-fd-background lg:flex-row lg:rounded-lg",
@@ -58,7 +60,7 @@ export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps)
       <div className="flex min-h-[280px] flex-1 flex-col lg:min-h-[min(520px,calc(100dvh-16rem))]">
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-6 lg:px-10">
           <div className="w-full max-w-3xl min-w-0">
-            <ThemedEmbedCard theme={cardTheme} url={url} />
+            <ThemedEmbedCard url={url} />
           </div>
         </div>
       </div>
@@ -111,27 +113,6 @@ export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps)
                   type="button"
                 >
                   {sample.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="text-xs font-semibold text-fd-foreground">
-              Presets
-            </p>
-            <p className="mt-1 text-[11px] text-fd-muted-foreground">
-              Pick a shape preset.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {demoThemes.map((preset) => (
-                <button
-                  className={pillClassName(presetId === preset.id)}
-                  key={preset.id}
-                  onClick={() => setPresetId(preset.id)}
-                  type="button"
-                >
-                  {preset.label}
                 </button>
               ))}
             </div>
