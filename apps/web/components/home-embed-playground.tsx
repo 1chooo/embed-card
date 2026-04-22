@@ -62,7 +62,7 @@ export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps)
     <div className={outerClass}>
       <div className="flex min-h-[280px] flex-1 flex-col lg:min-h-[min(520px,calc(100dvh-16rem))]">
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-6 lg:px-10">
-          <div className="w-full max-w-xl min-w-0">
+          <div className="w-full max-w-3xl min-w-0">
             <ThemedEmbedCard theme={cardTheme} url={url} />
           </div>
         </div>
@@ -126,7 +126,7 @@ export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps)
               Theme presets
             </p>
             <p className="mt-1 text-[11px] text-fd-muted-foreground">
-              Pick a ready-made card theme.
+              Pick a ready-made embed theme.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {demoThemes.map((preset) => (

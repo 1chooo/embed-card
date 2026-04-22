@@ -10,7 +10,6 @@ import {
   DEFAULTS,
   buildSnippet,
   hexToRgb,
-  mixTowardWhite,
   pillClassName,
   rgbaAlpha,
 } from "@/components/embed-playground-shared"
@@ -114,8 +113,6 @@ export function EmbedPlayground({
   const [borderAlpha, setBorderAlpha] = useState(DEFAULTS.borderAlpha)
   const [shadowAlpha, setShadowAlpha] = useState(DEFAULTS.shadowAlpha)
   const [shadowSpread, setShadowSpread] = useState(DEFAULTS.shadowSpread)
-  const [bgTint, setBgTint] = useState(DEFAULTS.bgTint)
-  const [mutedStrength, setMutedStrength] = useState(DEFAULTS.mutedStrength)
   const [activePresetId, setActivePresetId] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [snippetOpen, setSnippetOpen] = useState(defaultSnippetOpen)
@@ -129,16 +126,10 @@ export function EmbedPlayground({
       rgb && shadowAlpha > 0
         ? `0 24px ${shadowSpread}px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${shadowAlpha / 100})`
         : "none"
-    const background = mixTowardWhite(accentHex, bgTint / 100)
-    const muted = rgb
-      ? `rgba(${Math.max(0, rgb.r - mutedStrength)}, ${Math.max(0, rgb.g - mutedStrength)}, ${Math.max(0, rgb.b - mutedStrength)}, 0.72)`
-      : "rgba(15, 23, 42, 0.62)"
 
     return {
       accentColor: accentHex,
-      background,
       borderColor: border,
-      mutedColor: muted,
       radius,
       ...(shadow !== EMBED_CARD_DEFAULT_SHADOW ? { shadow } : {}),
     }
@@ -148,8 +139,6 @@ export function EmbedPlayground({
     borderAlpha,
     shadowAlpha,
     shadowSpread,
-    bgTint,
-    mutedStrength,
   ])
 
   const snippet = useMemo(
@@ -173,8 +162,6 @@ export function EmbedPlayground({
     setBorderAlpha(DEFAULTS.borderAlpha)
     setShadowAlpha(DEFAULTS.shadowAlpha)
     setShadowSpread(DEFAULTS.shadowSpread)
-    setBgTint(DEFAULTS.bgTint)
-    setMutedStrength(DEFAULTS.mutedStrength)
     setUrl(sampleEmbeds[0].url)
     setActivePresetId(null)
   }, [])
@@ -209,7 +196,7 @@ export function EmbedPlayground({
     <div className={outerClass}>
       <div className="flex min-h-[280px] flex-1 flex-col lg:min-h-[min(520px,calc(100dvh-16rem))]">
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-6 lg:px-10">
-          <div className="w-full max-w-xl min-w-0">
+          <div className="w-full max-w-3xl min-w-0">
             <ThemedEmbedCard theme={cardTheme} url={url} />
           </div>
         </div>
@@ -302,7 +289,7 @@ export function EmbedPlayground({
 
           <div className="space-y-7 border-t border-fd-border pt-8">
             <p className="text-xs font-semibold text-fd-foreground">
-              Fine-tune
+              Fine-tune embed surface
             </p>
 
             <ControlRow label="Accent" value={accentHex} hint="Picker + presets above.">
@@ -382,39 +369,6 @@ export function EmbedPlayground({
               />
             </ControlRow>
 
-            <ControlRow
-              label="Surface tint"
-              value={(bgTint / 100).toFixed(2)}
-              hint="Pull the card surface toward the accent."
-            >
-              <SliderField
-                aria-label="Surface tint"
-                max={28}
-                min={0}
-                onChange={(v) => {
-                  setBgTint(v)
-                  setActivePresetId(null)
-                }}
-                value={bgTint}
-              />
-            </ControlRow>
-
-            <ControlRow
-              label="Muted text"
-              value={String(mutedStrength)}
-              hint="How much the body text leans away from the accent."
-            >
-              <SliderField
-                aria-label="Muted text strength"
-                max={80}
-                min={12}
-                onChange={(v) => {
-                  setMutedStrength(v)
-                  setActivePresetId(null)
-                }}
-                value={mutedStrength}
-              />
-            </ControlRow>
           </div>
 
           <div className="border-t border-fd-border pt-6">

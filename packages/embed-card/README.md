@@ -21,6 +21,8 @@ export function ArticleEmbed() {
 }
 ```
 
+`EmbedCard` renders a single styled surface — the embed content itself, with no surrounding title, description, or footer chrome. For iframe providers (YouTube, Vimeo, X, Google Maps) the root adopts the provider's native aspect ratio. Reddit threads render a client-side preview fetched from Reddit's public JSON API.
+
 ## Theme the card
 
 `theme` fields are optional, including `shadow`. The default is **no** `box-shadow`—only set `theme.shadow` when you want one. The default is exported as `EMBED_CARD_DEFAULT_SHADOW` if you need to compare or reset in app code.
@@ -43,7 +45,7 @@ export function BrandedEmbed() {
 
 ### Dark mode / appearance
 
-Pass `appearance` to control whether the card chrome (gradients, borders, preview panel) uses a light or dark palette.
+Pass `appearance` to control whether the embed surface uses a light or dark palette.
 
 | Value | Behaviour |
 |---|---|
@@ -69,6 +71,20 @@ For the **web component**, set the `appearance` attribute:
 
 `appearance="system"` subscribes to `prefers-color-scheme` and re-renders automatically when the OS theme changes.
 
+### `ctaLabel`
+
+For fallback link previews (URLs that don't match a built-in provider), `ctaLabel` overrides the default "Open original" call-to-action text shown inside the card surface. It has no effect on iframe or Reddit embeds.
+
+```tsx
+<EmbedCard url="https://example.com" ctaLabel="Visit site" />
+```
+
+In the web component, use `cta-label`:
+
+```html
+<embed-card url="https://example.com" cta-label="Visit site"></embed-card>
+```
+
 ## Web component usage
 
 ```ts
@@ -83,6 +99,16 @@ registerEmbedCard()
   accent-color="#0f766e"
 ></embed-card>
 ```
+
+### Shadow DOM parts
+
+The custom element exposes a single CSS part for external styling:
+
+| Part | Element |
+|------|---------|
+| `root` | The embed surface root (`<figure>`) |
+
+> **Breaking change from ≤0.1.x**: The `header`, `footer`, and inner `preview` shadow parts no longer exist. Style `::part(root)` instead, or use CSS variables for theming.
 
 ## Low-level manual usage
 

@@ -16,14 +16,13 @@ The patterns here apply to any project that:
 
 ## When to use `EmbedCard` directly
 
-Use `<EmbedCard url="..." />` when you want the full styled card out of the box and are happy to theme it via the `theme` prop:
+Use `<EmbedCard url="..." />` when you want the embed surface out of the box and are happy to theme it via the `theme` prop:
 
 ```tsx
 <EmbedCard
   url="https://www.reddit.com/r/nextjs/comments/..."
   theme={{
     accentColor: "#ff4500",
-    background: "#fefefe",
     borderColor: "#e5e0d8",
     fontFamily: "Georgia, 'Times New Roman', serif",
   }}
@@ -313,7 +312,7 @@ styles, pass `className` and/or `style`:
 
 ### Live: default variables vs editorial wrapper
 
-Left: preview with `createThemeVariables()` only (package defaults). Right: custom theme on the wrapper plus `className` / `style` on `RedditEmbedPreview` for extra chrome.
+Left: `RedditEmbedPreview` with `createThemeVariables()` defaults. Right: editorial wrapper with a custom accent, serif font, and tighter radius.
 
 <CustomRenderingRedditPreviewCompare />
 
@@ -336,7 +335,7 @@ CSS variables set on the wrapper are inherited by all `embed-card` subcomponents
 
 ## Dark mode and appearance
 
-Pass `appearance` to control whether the card chrome (gradients, borders, preview panel) uses a light or dark palette.
+Pass `appearance` to control whether the embed surface (gradients, borders, background) uses a light or dark palette.
 
 | Value | Behavior |
 |---|---|
@@ -392,7 +391,7 @@ The full set of CSS variables accepted by `embed-card` components, and their cor
 | `--embed-card-chrome-tint` | *(derived from `appearance`)* | `#ffffff` | `#0f172a` |
 | `--embed-card-preview-canvas` | *(derived from `appearance`)* | `#ffffff` | `#0d1420` |
 
-`--embed-card-chrome-tint` is the color mixed into gradients and border blends. `--embed-card-preview-canvas` is the base fill behind the iframe or Reddit preview panel. Both are set automatically by `createThemeVariables` — you only need to override them if you are rendering components manually without going through `EmbedCard`.
+`--embed-card-chrome-tint` is the color mixed into gradients and border blends. `--embed-card-preview-canvas` is the base fill of the embed surface. Both are set automatically by `createThemeVariables` — you only need to override them when rendering components manually without going through `EmbedCard`. `--embed-card-background` is available for custom rendering scenarios (e.g. an outer wrapper) but is not used by the `EmbedCard` root itself.
 
 You can set any of these variables directly on a wrapper element when building a fully custom render:
 

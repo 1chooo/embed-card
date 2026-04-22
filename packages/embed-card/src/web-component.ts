@@ -24,83 +24,17 @@ const componentStyles = `
   }
 
   .root {
-    display: grid;
-    gap: 1rem;
-    padding: 1.25rem;
-    border-radius: var(--embed-card-radius);
-    border: 1px solid var(--embed-card-border);
-    background: linear-gradient(160deg, color-mix(in srgb, var(--embed-card-background) 94%, var(--embed-card-chrome-tint) 6%), var(--embed-card-background));
-    color: var(--embed-card-text);
-    box-shadow: var(--embed-card-shadow);
-    backdrop-filter: blur(18px);
-    font-family: inherit;
-  }
-
-  .header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-    min-width: 0;
-  }
-
-  .header > div:first-child {
-    min-width: 0;
-    flex: 1 1 12rem;
-  }
-
-  .eyebrow,
-  .description,
-  .muted {
-    color: var(--embed-card-muted);
-  }
-
-  .eyebrow {
-    font-size: 0.82rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .title {
-    margin: 0.35rem 0 0;
-    font-size: 1.25rem;
-    line-height: 1.15;
-    font-weight: 700;
-    overflow-wrap: anywhere;
-  }
-
-  .badge {
-    align-self: flex-start;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.35rem 0.7rem;
-    border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--embed-card-accent) 24%, var(--embed-card-chrome-tint) 76%);
-    background: color-mix(in srgb, var(--embed-card-accent) 12%, var(--embed-card-chrome-tint) 88%);
-    color: var(--embed-card-accent);
-    font-size: 0.78rem;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .description {
-    margin: 0;
-    line-height: 1.6;
-    font-size: 0.96rem;
-    overflow-wrap: anywhere;
-  }
-
-  .preview {
     position: relative;
     overflow: hidden;
+    box-sizing: border-box;
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    border-radius: calc(var(--embed-card-radius) - 8px);
+    border-radius: var(--embed-card-radius);
     border: 1px solid color-mix(in srgb, var(--embed-card-border) 82%, var(--embed-card-chrome-tint) 18%);
     background: radial-gradient(circle at top, color-mix(in srgb, var(--embed-card-accent) 22%, var(--embed-card-chrome-tint) 78%), transparent 58%), var(--embed-card-preview-canvas);
+    box-shadow: var(--embed-card-shadow);
+    font-family: inherit;
   }
 
   iframe {
@@ -126,16 +60,7 @@ const componentStyles = `
     padding: 1.5rem;
     text-align: center;
     font-size: 0.95rem;
-  }
-
-  .footer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    border-top: 1px solid color-mix(in srgb, var(--embed-card-border) 80%, var(--embed-card-chrome-tint) 20%);
-    padding-top: 0.9rem;
+    color: var(--embed-card-muted);
   }
 
   a {
@@ -163,7 +88,7 @@ function getThemeFromAttributes(element: HTMLElement): EmbedCardTheme {
   }
 }
 
-function renderPreview(resolved: ResolvedEmbed): string {
+function renderContent(resolved: ResolvedEmbed, ctaLabel?: string): string {
   if (resolved.renderer.type === "iframe") {
     const size = [
       `aspect-ratio:${resolved.renderer.aspectRatio ?? "16 / 9"}`,
@@ -175,67 +100,40 @@ function renderPreview(resolved: ResolvedEmbed): string {
       .join(";")
 
     return `
-      <div class="preview" part="preview" style="${size}">
-        <iframe
-          allow="${escapeHtml(resolved.renderer.allow ?? "")}"
-          ${resolved.renderer.allowFullScreen ? "allowfullscreen" : ""}
-          loading="lazy"
-          referrerpolicy="${escapeHtml(resolved.renderer.referrerPolicy ?? "strict-origin-when-cross-origin")}"
-          ${resolved.renderer.sandbox ? `sandbox="${escapeHtml(resolved.renderer.sandbox)}"` : ""}
-          src="${escapeHtml(resolved.renderer.src)}"
-          title="${escapeHtml(resolved.renderer.title)}"
-        ></iframe>
-      </div>
+      <iframe
+        allow="${escapeHtml(resolved.renderer.allow ?? "")}"
+        ${resolved.renderer.allowFullScreen ? "allowfullscreen" : ""}
+        loading="lazy"
+        referrerpolicy="${escapeHtml(resolved.renderer.referrerPolicy ?? "strict-origin-when-cross-origin")}"
+        ${resolved.renderer.sandbox ? `sandbox="${escapeHtml(resolved.renderer.sandbox)}"` : ""}
+        src="${escapeHtml(resolved.renderer.src)}"
+        style="${size}"
+        title="${escapeHtml(resolved.renderer.title)}"
+      ></iframe>
     `
   }
 
   if (resolved.renderer.type === "link") {
+    const cta = ctaLabel ?? resolved.renderer.ctaLabel ?? "Open original"
     return `
-      <a class="preview fallback" href="${escapeHtml(resolved.renderer.href)}" rel="noreferrer" target="_blank">
-        <span class="eyebrow">Fallback preview</span>
-        <strong>${escapeHtml(resolved.displayUrl)}</strong>
-        <span>${escapeHtml(resolved.renderer.ctaLabel ?? "Open original")}</span>
+      <a class="fallback" href="${escapeHtml(resolved.renderer.href)}" rel="noreferrer" target="_blank">
+        <strong style="font-size:1rem;overflow-wrap:anywhere;color:var(--embed-card-text)">${escapeHtml(resolved.displayUrl)}</strong>
+        <span>${escapeHtml(cta)}</span>
       </a>
     `
   }
 
   if (resolved.renderer.type === "reddit_client") {
     return `
-      <div class="preview" part="preview" style="min-height:280px;padding:0;background:var(--embed-card-preview-canvas);">
-        <div data-reddit-mount style="min-height:260px;padding:1.5rem;">
-          <div style="height:10px;width:33%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 55%,transparent);margin-bottom:10px"></div>
-          <div style="height:14px;width:75%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 45%,transparent);margin-bottom:10px"></div>
-          <div style="height:14px;width:50%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 35%,transparent)"></div>
-        </div>
+      <div data-reddit-mount style="min-height:260px;padding:1.5rem;">
+        <div style="height:10px;width:33%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 55%,transparent);margin-bottom:10px"></div>
+        <div style="height:14px;width:75%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 45%,transparent);margin-bottom:10px"></div>
+        <div style="height:14px;width:50%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 35%,transparent)"></div>
       </div>
     `
   }
 
-  return `
-    <div class="preview invalid" part="invalid">
-      ${escapeHtml(resolved.renderer.message)}
-    </div>
-  `
-}
-
-function renderHeaderAndDescription(resolved: ResolvedEmbed): string {
-  const isReddit = resolved.renderer.type === "reddit_client"
-  const titleHtml = isReddit
-    ? ""
-    : `<h3 class="title">${escapeHtml(resolved.title)}</h3>`
-  const descHtml = isReddit
-    ? ""
-    : `<p class="description">${escapeHtml(resolved.description)}</p>`
-  return `
-        <div class="header" part="header">
-          <div>
-            <span class="eyebrow">${escapeHtml(resolved.providerLabel)}</span>
-            ${titleHtml}
-          </div>
-          <span class="badge">${escapeHtml(resolved.site)}</span>
-        </div>
-        ${descHtml}
-  `
+  return `<div class="invalid">${escapeHtml(resolved.renderer.message)}</div>`
 }
 
 export class EmbedCardElement extends HTMLElement {
@@ -252,6 +150,7 @@ export class EmbedCardElement extends HTMLElement {
     "muted-color",
     "radius",
     "shadow",
+    "cta-label",
   ]
 
   connectedCallback(): void {
@@ -312,20 +211,25 @@ export class EmbedCardElement extends HTMLElement {
     this.redditHydrateAbort?.abort()
     this.redditHydrateAbort = null
 
+    const ctaLabel = this.getAttribute("cta-label") ?? undefined
+    const ariaLabel =
+      resolved.renderer.type === "iframe"
+        ? resolved.title || "Embed"
+        : resolved.renderer.type === "link"
+          ? resolved.title || "Link preview"
+          : resolved.renderer.type === "reddit_client"
+            ? "Reddit embed"
+            : resolved.renderer.message
+
+    const rootStyle = resolved.renderer.type === "reddit_client"
+      ? `color-scheme:${resolvedMode};min-height:280px;padding:0;background:var(--embed-card-preview-canvas);${variablesToInlineStyle(variables)}`
+      : `color-scheme:${resolvedMode};${variablesToInlineStyle(variables)}`
+
     this.shadowRoot.innerHTML = `
       <style>${componentStyles}</style>
-      <article class="root" part="root" data-provider="${escapeHtml(resolved.provider)}" style="color-scheme:${resolvedMode};${variablesToInlineStyle(variables)}">
-        ${renderHeaderAndDescription(resolved)}
-        ${renderPreview(resolved)}
-        <div class="footer" part="footer">
-          <span class="muted">${escapeHtml(resolved.displayUrl)}</span>
-          ${
-            resolved.renderer.type === "invalid"
-              ? ""
-              : `<a href="${escapeHtml(resolved.url)}" rel="noreferrer" target="_blank">Open original</a>`
-          }
-        </div>
-      </article>
+      <figure class="root" part="root" data-provider="${escapeHtml(resolved.provider)}" aria-label="${escapeHtml(ariaLabel)}" style="${rootStyle}">
+        ${renderContent(resolved, ctaLabel)}
+      </figure>
     `
 
     this.scheduleRedditHydration(resolved)

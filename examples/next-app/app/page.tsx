@@ -7,9 +7,7 @@ const DEMO_URL =
 
 const DEMO_THEME = {
   accentColor: "#e11d48",
-  background: "rgba(255,255,255,0.97)",
   borderColor: "rgba(225,29,72,0.18)",
-  mutedColor: "rgba(17,24,39,0.62)",
   radius: 28,
   shadow: "0 28px 100px rgba(225,29,72,0.14)",
 } as const
@@ -19,7 +17,7 @@ export default function Page() {
     <main
       style={{
         margin: "0 auto",
-        maxWidth: "42rem",
+        maxWidth: "56rem",
         padding: "2.5rem 1.5rem 4rem",
       }}
     >
@@ -43,7 +41,7 @@ export default function Page() {
           letterSpacing: "-0.03em",
         }}
       >
-        Turn a URL into a rich embed card
+        Turn a URL into a rich embed
       </h1>
       <p style={{ margin: "0.75rem 0 1.75rem", color: "#475569" }}>
         This page imports <code>EmbedCard</code> from{" "}

@@ -36,7 +36,7 @@ The monorepo uses **pnpm** workspaces and **Turborepo**: root `pnpm build` and `
 
 ## Design goal
 
-Consumers should only need **one install** for the common path, while still getting:
+`EmbedCard` renders a single embed surface — the content itself, with no surrounding title, description, or footer chrome. Consumers should only need **one install** for the common path, while still getting:
 
 - A React component for Next.js and React apps
 - A web component export for other frameworks

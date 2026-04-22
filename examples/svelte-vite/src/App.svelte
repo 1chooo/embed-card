@@ -6,7 +6,7 @@
 
 <main class="demo">
   <p class="eyebrow">embed-card · Vite + Svelte</p>
-  <h1>Turn a URL into a rich embed card</h1>
+  <h1>Turn a URL into a rich embed</h1>
   <p class="lede">
     Svelte uses the custom element from <code>embed-card/web-component</code>.
     Call <code>registerEmbedCard()</code> once, then use
@@ -15,9 +15,7 @@
   <embed-card
     url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
     accent-color="#e11d48"
-    background="rgba(255,255,255,0.97)"
     border-color="rgba(225,29,72,0.18)"
-    muted-color="rgba(17,24,39,0.62)"
     radius="28px"
     shadow="0 28px 100px rgba(225,29,72,0.14)"
   ></embed-card>
@@ -53,7 +51,7 @@
 
   .demo {
     margin: 0 auto;
-    max-width: 42rem;
+    max-width: 56rem;
     padding: 2.5rem 1.5rem 4rem;
   }
 

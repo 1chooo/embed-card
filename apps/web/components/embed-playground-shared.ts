@@ -49,8 +49,6 @@ export const DEFAULTS = {
   borderAlpha: 22,
   shadowAlpha: 0,
   shadowSpread: 72,
-  bgTint: 8,
-  mutedStrength: 40,
 }
 
 export function buildSnippet(url: string, theme: EmbedCardTheme): string {
@@ -77,9 +75,7 @@ export function Example() {
       url={${JSON.stringify(url)}}
       theme={{
         accentColor: ${JSON.stringify(theme.accentColor ?? "#111827")},
-        background: ${JSON.stringify(theme.background ?? "rgba(255,255,255,0.98)")},
         borderColor: ${JSON.stringify(theme.borderColor ?? "rgba(15,23,42,0.12)")},
-        mutedColor: ${JSON.stringify(theme.mutedColor ?? "rgba(15,23,42,0.62)")},
 ${radiusLine}${shadowLine}${appearanceLine}
       }}
     />
