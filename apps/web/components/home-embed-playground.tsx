@@ -3,12 +3,11 @@
 import { useCallback, useMemo, useState } from "react"
 
 import type { EmbedCardTheme } from "embed-card"
-import { EmbedCard } from "embed-card"
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
-import { useTheme } from "next-themes"
 
 import { buildSnippet, pillClassName } from "@/components/embed-playground-shared"
 import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
+import { ThemedEmbedCard } from "@/components/themed-embed-card"
 
 export type HomeEmbedPlaygroundProps = {
   /** Match docs playground: false = contained card on the marketing page. */
@@ -21,14 +20,18 @@ export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps)
     demoThemes[0].id
   )
   const [copied, setCopied] = useState(false)
-  const { resolvedTheme } = useTheme()
 
   const cardTheme = useMemo((): EmbedCardTheme => {
     const entry = demoThemes.find((d) => d.id === presetId) ?? demoThemes[0]
-    const appearance: EmbedCardTheme["appearance"] =
-      resolvedTheme === "dark" ? "dark" : "light"
-    return { ...entry.theme, appearance }
-  }, [presetId, resolvedTheme])
+    // Only pass accent-neutral fields so dark defaults apply correctly in dark mode.
+    // `background` and `mutedColor` from presets are light-only values — omitting them
+    // lets `createThemeVariables` pick the right defaults for each appearance mode.
+    return {
+      accentColor: entry.theme.accentColor,
+      borderColor: entry.theme.borderColor,
+      radius: entry.theme.radius,
+    }
+  }, [presetId])
 
   const snippet = useMemo(
     () => buildSnippet(url, cardTheme),
@@ -57,17 +60,10 @@ export function HomeEmbedPlayground({ bleed = false }: HomeEmbedPlaygroundProps)
 
   return (
     <div className={outerClass}>
-      <div className="flex min-h-[280px] flex-1 flex-col bg-linear-to-b from-fd-muted/30 to-fd-muted/10 lg:min-h-[min(520px,calc(100dvh-16rem))]">
-        <div className="shrink-0 px-6 pt-6 pb-2 lg:px-10 lg:pt-8">
-          <p className="text-[11px] font-medium tracking-wide text-fd-muted-foreground uppercase">
-            Preview
-          </p>
-        </div>
-        <div className="flex flex-1 flex-col items-center justify-center px-6 pb-8 lg:px-10">
-          <div className="relative w-full max-w-xl min-w-0">
-            <div className="rounded-lg">
-              <EmbedCard theme={cardTheme} url={url} />
-            </div>
+      <div className="flex min-h-[280px] flex-1 flex-col lg:min-h-[min(520px,calc(100dvh-16rem))]">
+        <div className="flex flex-1 flex-col items-center justify-center px-6 py-6 lg:px-10">
+          <div className="w-full max-w-xl min-w-0">
+            <ThemedEmbedCard theme={cardTheme} url={url} />
           </div>
         </div>
       </div>

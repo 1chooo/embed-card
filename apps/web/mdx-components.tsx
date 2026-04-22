@@ -5,6 +5,7 @@ import {
   CustomRenderingEmbedCardCompare,
   CustomRenderingRedditPreviewCompare,
 } from "@/components/custom-rendering-demos"
+import { ThemedEmbedCard } from "@/components/themed-embed-card"
 
 export function getMDXComponents(
   components?: MDXComponents
@@ -12,6 +13,7 @@ export function getMDXComponents(
   return {
     ...defaultMdxComponents,
     ...components,
+    EmbedCard: ThemedEmbedCard,
     CustomRenderingEmbedCardCompare,
     CustomRenderingRedditPreviewCompare,
   }

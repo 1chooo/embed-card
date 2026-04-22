@@ -3,9 +3,8 @@
 import { useCallback, useMemo, useState, type ReactNode } from "react"
 
 import type { EmbedCardTheme } from "embed-card"
-import { EMBED_CARD_DEFAULT_SHADOW, EmbedCard } from "embed-card"
+import { EMBED_CARD_DEFAULT_SHADOW } from "embed-card"
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
-import { useTheme } from "next-themes"
 
 import {
   DEFAULTS,
@@ -16,6 +15,7 @@ import {
   rgbaAlpha,
 } from "@/components/embed-playground-shared"
 import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
+import { ThemedEmbedCard } from "@/components/themed-embed-card"
 
 function ControlRow({
   label,
@@ -119,7 +119,6 @@ export function EmbedPlayground({
   const [activePresetId, setActivePresetId] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [snippetOpen, setSnippetOpen] = useState(defaultSnippetOpen)
-  const { resolvedTheme } = useTheme()
 
   const cardTheme = useMemo(() => {
     const rgb = hexToRgb(accentHex)
@@ -134,8 +133,6 @@ export function EmbedPlayground({
     const muted = rgb
       ? `rgba(${Math.max(0, rgb.r - mutedStrength)}, ${Math.max(0, rgb.g - mutedStrength)}, ${Math.max(0, rgb.b - mutedStrength)}, 0.72)`
       : "rgba(15, 23, 42, 0.62)"
-    const appearance: EmbedCardTheme["appearance"] =
-      resolvedTheme === "dark" ? "dark" : "light"
 
     return {
       accentColor: accentHex,
@@ -144,7 +141,6 @@ export function EmbedPlayground({
       mutedColor: muted,
       radius,
       ...(shadow !== EMBED_CARD_DEFAULT_SHADOW ? { shadow } : {}),
-      appearance,
     }
   }, [
     accentHex,
@@ -154,7 +150,6 @@ export function EmbedPlayground({
     shadowSpread,
     bgTint,
     mutedStrength,
-    resolvedTheme,
   ])
 
   const snippet = useMemo(
@@ -212,18 +207,10 @@ export function EmbedPlayground({
 
   return (
     <div className={outerClass}>
-      {/* Preview: stacked layout, no absolute label (avoids overlap in docs). */}
-      <div className="flex min-h-[280px] flex-1 flex-col bg-linear-to-b from-fd-muted/30 to-fd-muted/10 lg:min-h-[min(520px,calc(100dvh-16rem))]">
-        <div className="shrink-0 px-6 pt-6 pb-2 lg:px-10 lg:pt-8">
-          <p className="text-[11px] font-medium tracking-wide text-fd-muted-foreground uppercase">
-            Preview
-          </p>
-        </div>
-        <div className="flex flex-1 flex-col items-center justify-center px-6 pb-8 lg:px-10">
-          <div className="relative w-full max-w-xl min-w-0">
-            <div className="rounded-lg">
-              <EmbedCard theme={cardTheme} url={url} />
-            </div>
+      <div className="flex min-h-[280px] flex-1 flex-col lg:min-h-[min(520px,calc(100dvh-16rem))]">
+        <div className="flex flex-1 flex-col items-center justify-center px-6 py-6 lg:px-10">
+          <div className="w-full max-w-xl min-w-0">
+            <ThemedEmbedCard theme={cardTheme} url={url} />
           </div>
         </div>
       </div>

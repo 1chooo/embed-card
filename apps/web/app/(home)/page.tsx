@@ -1,9 +1,8 @@
 import Link from "next/link"
 import { ArrowRight, BookOpenText, PlayCircle } from "lucide-react"
 
-import { EmbedCard } from "embed-card"
-
 import { HomePlaygroundSection } from "@/components/home-playground-section"
+import { ThemedEmbedCard } from "@/components/themed-embed-card"
 
 const exampleUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
@@ -54,17 +53,15 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="min-w-0 rounded-lg p-5 md:p-6">
-          <div className="w-full min-w-0">
-            <EmbedCard
-              theme={{
-                accentColor: "#e11d48",
-                borderColor: "rgba(225, 29, 72, 0.18)",
-                radius: 20,
-              }}
-              url={exampleUrl}
-            />
-          </div>
+        <div className="min-w-0">
+          <ThemedEmbedCard
+            theme={{
+              accentColor: "#e11d48",
+              borderColor: "rgba(225, 29, 72, 0.18)",
+              radius: 20,
+            }}
+            url={exampleUrl}
+          />
         </div>
       </section>
 
