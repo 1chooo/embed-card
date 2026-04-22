@@ -91,8 +91,8 @@ importers:
   examples/next-app:
     dependencies:
       embed-card:
-        specifier: 0.1.6
-        version: 0.1.6(react@19.2.4)
+        specifier: 0.2.0
+        version: 0.2.0(next-themes@0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       next:
         specifier: 16.1.6
         version: 16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -119,8 +119,8 @@ importers:
   examples/svelte-vite:
     dependencies:
       embed-card:
-        specifier: 0.1.6
-        version: 0.1.6(react@19.2.4)
+        specifier: 0.2.0
+        version: 0.2.0(next-themes@0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.1.0
@@ -141,8 +141,8 @@ importers:
   examples/vanilla-vite:
     dependencies:
       embed-card:
-        specifier: 0.1.6
-        version: 0.1.6(react@19.2.4)
+        specifier: 0.2.0
+        version: 0.2.0(next-themes@0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
     devDependencies:
       typescript:
         specifier: ~5.9.3
@@ -154,8 +154,8 @@ importers:
   examples/vite-react:
     dependencies:
       embed-card:
-        specifier: 0.1.6
-        version: 0.1.6(react@19.2.4)
+        specifier: 0.2.0
+        version: 0.2.0(next-themes@0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       react:
         specifier: ^19.2.4
         version: 19.2.4
@@ -182,8 +182,8 @@ importers:
   examples/vue-vite:
     dependencies:
       embed-card:
-        specifier: 0.1.6
-        version: 0.1.6(react@19.2.4)
+        specifier: 0.2.0
+        version: 0.2.0(next-themes@0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       vue:
         specifier: ^3.5.13
         version: 3.5.32(typescript@5.9.3)
@@ -2957,11 +2957,14 @@ packages:
   electron-to-chromium@1.5.286:
     resolution: {integrity: sha512-9tfDXhJ4RKFNerfjdCcZfufu49vg620741MNs26a9+bhLThdB+plgMeou98CAaHu/WATj2iHOOHTp1hWtABj2A==}
 
-  embed-card@0.1.6:
-    resolution: {integrity: sha512-e9UkiDmVR+qe5c1jOYvJk7IfLGVCwGVTLluzNrEi3j8utx1WpRAFF6Icg42cOLfmV644E6bCZpuWv8Aw1WrK8w==}
+  embed-card@0.2.0:
+    resolution: {integrity: sha512-qpBlJncV2PjYAgUJjwnfZshyh+YCwMGXENbL/5eQot1Y97wTXUNbeXWaX0JVDZQS9hCEFfIRbXvhFWdtzZmUGA==}
     peerDependencies:
+      next-themes: ^0.3.0 || ^0.4.0
       react: ^18.3.0 || ^19.0.0
     peerDependenciesMeta:
+      next-themes:
+        optional: true
       react:
         optional: true
 
@@ -8121,8 +8124,9 @@ snapshots:
 
   electron-to-chromium@1.5.286: {}
 
-  embed-card@0.1.6(react@19.2.4):
+  embed-card@0.2.0(next-themes@0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
     optionalDependencies:
+      next-themes: 0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react: 19.2.4
 
   emoji-regex@10.6.0: {}
