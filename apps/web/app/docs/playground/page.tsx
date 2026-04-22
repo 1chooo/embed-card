@@ -6,7 +6,7 @@ import { EmbedPlayground } from "@/components/embed-playground"
 export const metadata: Metadata = {
   title: "Playground",
   description:
-    "Try sample URLs and theme options; the preview updates as you adjust controls.",
+    "Try sample URLs; the live preview and React snippet stay in sync as you edit.",
 }
 
 export default function DocsPlaygroundPage() {
@@ -14,8 +14,8 @@ export default function DocsPlaygroundPage() {
     <DocsPage full>
       <DocsTitle>Playground</DocsTitle>
       <DocsDescription>
-        Paste a URL or pick a sample, then use presets and fine-grained sliders
-        below. The snippet always matches your current settings.
+        Paste a URL or pick a sample. The snippet matches the preview; use the
+        copy control on the code block when you are ready.
       </DocsDescription>
       <DocsBody>
         <EmbedPlayground />

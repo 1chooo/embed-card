@@ -3,7 +3,7 @@ import { PanelRight } from "lucide-react"
 
 import { HomeEmbedPlayground } from "@/components/home-embed-playground"
 
-/** Matches `Reset` / `Copy code` in `embed-playground.tsx` control bars. */
+/** Matches `Reset` in the playground Options bar (`embed-playground.tsx`). */
 const btnOutline =
   "inline-flex items-center justify-center rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
 const btnPrimary =

@@ -4,7 +4,10 @@ import { useCallback, useMemo, useState } from "react"
 
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
 
-import { pillClassName } from "@/components/embed-playground-shared"
+import {
+  buildUrlOnlySnippet,
+  pillClassName,
+} from "@/components/embed-playground-shared"
 import { sampleEmbeds } from "@/lib/sample-urls"
 import { ThemedEmbedCard } from "embed-card/next-themes"
 
@@ -15,36 +18,13 @@ export type HomeEmbedPlaygroundProps = {
   bleed?: boolean
 }
 
-function buildUrlOnlySnippet(embedUrl: string): string {
-  return `import { EmbedCard } from "embed-card"
-
-export function Example() {
-  return (
-    <EmbedCard
-      url={${JSON.stringify(embedUrl)}}
-    />
-  )
-}`
-}
-
 export function HomeEmbedPlayground({
   url: initialUrl = sampleEmbeds[0].url,
   bleed = false,
 }: HomeEmbedPlaygroundProps) {
   const [url, setUrl] = useState<string>(initialUrl)
-  const [copied, setCopied] = useState(false)
 
   const snippet = useMemo(() => buildUrlOnlySnippet(url), [url])
-
-  const copySnippet = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(snippet)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 2000)
-    } catch {
-      setCopied(false)
-    }
-  }, [snippet])
 
   const reset = useCallback(() => {
     setUrl(initialUrl)
@@ -70,22 +50,13 @@ export function HomeEmbedPlayground({
           <span className="text-xs font-semibold text-fd-foreground">
             Options
           </span>
-          <div className="flex shrink-0 gap-2">
-            <button
-              className="rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
-              onClick={reset}
-              type="button"
-            >
-              Reset
-            </button>
-            <button
-              className="rounded-md border border-fd-border bg-fd-primary px-2.5 py-1.5 text-[11px] font-medium text-fd-primary-foreground transition hover:opacity-90"
-              onClick={copySnippet}
-              type="button"
-            >
-              {copied ? "Copied" : "Copy code"}
-            </button>
-          </div>
+          <button
+            className="shrink-0 rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
+            onClick={reset}
+            type="button"
+          >
+            Reset
+          </button>
         </div>
 
         <div className="space-y-8 px-4 py-6 sm:px-5">
@@ -126,7 +97,6 @@ export function HomeEmbedPlayground({
               code={snippet}
               lang="tsx"
               codeblock={{
-                allowCopy: false,
                 className:
                   "not-prose my-0 mt-3 max-h-56 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 text-[11px] leading-relaxed text-fd-foreground",
               }}

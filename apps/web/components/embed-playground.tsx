@@ -1,164 +1,34 @@
 "use client"
 
-import { useCallback, useMemo, useState, type ReactNode } from "react"
+import { useCallback, useMemo, useState } from "react"
 
-import type { EmbedCardTheme } from "embed-card"
-import { EMBED_CARD_DEFAULT_SHADOW } from "embed-card"
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
 
 import {
-  DEFAULTS,
-  buildSnippet,
-  hexToRgb,
+  buildUrlOnlySnippet,
   pillClassName,
 } from "@/components/embed-playground-shared"
-import { demoThemes, sampleEmbeds } from "@/lib/sample-urls"
+import { sampleEmbeds } from "@/lib/sample-urls"
 import { ThemedEmbedCard } from "embed-card/next-themes"
 
-function ControlRow({
-  label,
-  value,
-  hint,
-  children,
-}: {
-  label: string
-  value: string
-  hint?: string
-  children: ReactNode
-}) {
-  return (
-    <div className="space-y-2.5">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <span className="text-xs font-medium text-fd-foreground">{label}</span>
-          {hint ? (
-            <p className="mt-0.5 text-[11px] leading-snug text-fd-muted-foreground">
-              {hint}
-            </p>
-          ) : null}
-        </div>
-        <code className="shrink-0 rounded bg-fd-muted/60 px-1.5 py-0.5 text-[11px] tabular-nums text-fd-foreground">
-          {value}
-        </code>
-      </div>
-      {children}
-    </div>
-  )
-}
-
-function SliderField({
-  min,
-  max,
-  value,
-  onChange,
-  "aria-label": ariaLabel,
-}: {
-  min: number
-  max: number
-  value: number
-  onChange: (v: number) => void
-  "aria-label"?: string
-}) {
-  const pct = ((value - min) / (max - min)) * 100
-  const rangeClass = [
-    "relative z-10 h-9 w-full cursor-pointer appearance-none bg-transparent",
-    "[&::-webkit-slider-runnable-track]:h-3 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-transparent",
-    "[&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-20 [&::-webkit-slider-thumb]:mt-0 [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:-translate-y-px [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-fd-background [&::-webkit-slider-thumb]:bg-fd-primary [&::-webkit-slider-thumb]:shadow-md",
-    "[&::-moz-range-track]:h-3 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-transparent",
-    "[&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-fd-background [&::-moz-range-thumb]:bg-fd-primary [&::-moz-range-thumb]:shadow-md",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-fd-background",
-  ].join(" ")
-
-  return (
-    <div className="relative rounded-full border border-fd-border bg-fd-muted/35 px-3 py-2.5">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-1/2 right-4 left-4 h-3 -translate-y-1/2 rounded-full bg-fd-muted/80"
-      >
-        <div
-          className="h-full rounded-l-full bg-fd-primary/45"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <input
-        aria-label={ariaLabel}
-        className={rangeClass}
-        max={max}
-        min={min}
-        onChange={(e) => onChange(Number(e.target.value))}
-        type="range"
-        value={value}
-      />
-    </div>
-  )
-}
-
 export type EmbedPlaygroundProps = {
+  /** Initial embed URL; visitors can still edit it in the playground. */
+  url?: string
   /** Negative margin for full-bleed inside docs prose (default: true). */
   bleed?: boolean
-  /** Whether the code snippet starts expanded. */
-  defaultSnippetOpen?: boolean
 }
 
 export function EmbedPlayground({
+  url: initialUrl = sampleEmbeds[0].url,
   bleed = true,
-  defaultSnippetOpen = true,
 }: EmbedPlaygroundProps) {
-  const [url, setUrl] = useState<string>(sampleEmbeds[0].url)
+  const [url, setUrl] = useState<string>(initialUrl)
 
-  const [accentHex, setAccentHex] = useState(DEFAULTS.accentHex)
-  const [radius, setRadius] = useState(DEFAULTS.radius)
-  const [shadowAlpha, setShadowAlpha] = useState(DEFAULTS.shadowAlpha)
-  const [activePresetId, setActivePresetId] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
-  const [snippetOpen, setSnippetOpen] = useState(defaultSnippetOpen)
+  const snippet = useMemo(() => buildUrlOnlySnippet(url), [url])
 
-  const cardTheme = useMemo((): EmbedCardTheme => {
-    const rgb = hexToRgb(accentHex)
-    const shadow =
-      rgb && shadowAlpha > 0
-        ? `0 24px 72px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${shadowAlpha / 100})`
-        : "none"
-
-    return {
-      accentColor: accentHex,
-      radius,
-      ...(shadow !== EMBED_CARD_DEFAULT_SHADOW ? { shadow } : {}),
-    }
-  }, [accentHex, radius, shadowAlpha])
-
-  const snippet = useMemo(
-    () => buildSnippet(url, cardTheme),
-    [url, cardTheme]
-  )
-
-  const copySnippet = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(snippet)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 2000)
-    } catch {
-      setCopied(false)
-    }
-  }, [snippet])
-
-  const resetFull = useCallback(() => {
-    setAccentHex(DEFAULTS.accentHex)
-    setRadius(DEFAULTS.radius)
-    setShadowAlpha(DEFAULTS.shadowAlpha)
-    setUrl(sampleEmbeds[0].url)
-    setActivePresetId(null)
-  }, [])
-
-  const applyPreset = useCallback(
-    (id: (typeof demoThemes)[number]["id"]) => {
-      const entry = demoThemes.find((d) => d.id === id)
-      if (!entry) return
-      setRadius(typeof entry.theme.radius === "number" ? entry.theme.radius : DEFAULTS.radius)
-      setActivePresetId(id)
-    },
-    []
-  )
+  const reset = useCallback(() => {
+    setUrl(initialUrl)
+  }, [initialUrl])
 
   const outerClass = [
     "not-prose flex min-h-0 min-w-0 flex-col border border-fd-border bg-fd-background lg:flex-row lg:rounded-lg",
@@ -170,7 +40,7 @@ export function EmbedPlayground({
       <div className="flex min-h-[280px] flex-1 flex-col lg:min-h-[min(520px,calc(100dvh-16rem))]">
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-6 lg:px-10">
           <div className="w-full max-w-3xl min-w-0">
-            <ThemedEmbedCard theme={cardTheme} url={url} />
+            <ThemedEmbedCard url={url} />
           </div>
         </div>
       </div>
@@ -183,24 +53,15 @@ export function EmbedPlayground({
       >
         <div className="flex items-center justify-between gap-2 border-b border-fd-border px-4 py-3 sm:px-5">
           <span className="text-xs font-semibold text-fd-foreground">
-            Controls
+            Options
           </span>
-          <div className="flex shrink-0 gap-2">
-            <button
-              className="rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
-              onClick={resetFull}
-              type="button"
-            >
-              Reset
-            </button>
-            <button
-              className="rounded-md border border-fd-border bg-fd-primary px-2.5 py-1.5 text-[11px] font-medium text-fd-primary-foreground transition hover:opacity-90"
-              onClick={copySnippet}
-              type="button"
-            >
-              {copied ? "Copied" : "Copy code"}
-            </button>
-          </div>
+          <button
+            className="shrink-0 rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
+            onClick={reset}
+            type="button"
+          >
+            Reset
+          </button>
         </div>
 
         <div className="space-y-8 px-4 py-6 sm:px-5">
@@ -210,10 +71,7 @@ export function EmbedPlayground({
               URL
               <input
                 className="mt-1.5 h-10 w-full rounded-md border border-fd-border bg-fd-background px-3 font-mono text-xs text-fd-foreground outline-none transition placeholder:text-fd-muted-foreground focus-visible:border-fd-primary focus-visible:ring-2 focus-visible:ring-fd-primary/25"
-                onChange={(e) => {
-                  setUrl(e.target.value)
-                  setActivePresetId(null)
-                }}
+                onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://..."
                 spellCheck={false}
                 value={url}
@@ -227,10 +85,7 @@ export function EmbedPlayground({
                 <button
                   className={pillClassName(sample.url === url)}
                   key={sample.label}
-                  onClick={() => {
-                    setUrl(sample.url)
-                    setActivePresetId(null)
-                  }}
+                  onClick={() => setUrl(sample.url)}
                   type="button"
                 >
                   {sample.label}
@@ -239,98 +94,18 @@ export function EmbedPlayground({
             </div>
           </div>
 
-          <div>
-            <p className="text-xs font-semibold text-fd-foreground">
-              Presets
-            </p>
-            <p className="mt-1 text-[11px] text-fd-muted-foreground">
-              Jump to a shape preset, then fine-tune below.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {demoThemes.map((preset) => (
-                <button
-                  className={pillClassName(activePresetId === preset.id)}
-                  key={preset.id}
-                  onClick={() => applyPreset(preset.id)}
-                  type="button"
-                >
-                  {preset.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-7 border-t border-fd-border pt-8">
-            <p className="text-xs font-semibold text-fd-foreground">
-              Appearance
-            </p>
-
-            <ControlRow label="Accent" value={accentHex} hint="Card accent color.">
-              <input
-                aria-label="Accent color"
-                className="h-10 w-full max-w-[220px] cursor-pointer rounded-md border border-fd-border bg-fd-background p-1"
-                onChange={(e) => {
-                  setAccentHex(e.target.value)
-                  setActivePresetId(null)
-                }}
-                type="color"
-                value={accentHex}
-              />
-            </ControlRow>
-
-            <ControlRow label="Radius" value={`${radius}px`} hint="Card corner radius.">
-              <SliderField
-                aria-label="Radius"
-                max={48}
-                min={8}
-                onChange={(v) => {
-                  setRadius(v)
-                  setActivePresetId(null)
-                }}
-                value={radius}
-              />
-            </ControlRow>
-
-            <ControlRow
-              label="Shadow"
-              value={(shadowAlpha / 100).toFixed(2)}
-              hint="Glow depth under the card."
-            >
-              <SliderField
-                aria-label="Shadow"
-                max={45}
-                min={0}
-                onChange={(v) => {
-                  setShadowAlpha(v)
-                  setActivePresetId(null)
-                }}
-                value={shadowAlpha}
-              />
-            </ControlRow>
-          </div>
-
           <div className="border-t border-fd-border pt-6">
-            <button
-              className="flex w-full items-center justify-between gap-2 rounded-md py-1 text-left text-xs font-semibold text-fd-foreground transition hover:text-fd-primary"
-              onClick={() => setSnippetOpen((o) => !o)}
-              type="button"
-            >
-              <span>React snippet</span>
-              <span className="text-[11px] font-normal text-fd-muted-foreground">
-                {snippetOpen ? "Hide" : "Show"}
-              </span>
-            </button>
-            {snippetOpen ? (
-              <DynamicCodeBlock
-                code={snippet}
-                lang="tsx"
-                codeblock={{
-                  allowCopy: false,
-                  className:
-                    "not-prose my-0 mt-3 max-h-52 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 text-[11px] leading-relaxed text-fd-foreground",
-                }}
-              />
-            ) : null}
+            <p className="text-xs font-semibold text-fd-foreground">
+              React snippet
+            </p>
+            <DynamicCodeBlock
+              code={snippet}
+              lang="tsx"
+              codeblock={{
+                className:
+                  "not-prose my-0 mt-3 max-h-56 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 text-[11px] leading-relaxed text-fd-foreground",
+              }}
+            />
           </div>
         </div>
       </aside>
