@@ -1,0 +1,105 @@
+"use client"
+
+import type { CSSProperties, ReactNode } from "react"
+import {
+  EmbedCard,
+  RedditEmbedPreview,
+  createThemeVariables,
+} from "embed-card"
+
+const REDDIT_POST_URL =
+  "https://www.reddit.com/r/github/comments/1j6jga7/i_rebuilt_my_personal_portfolio_using_nextjsits/"
+
+function CompareColumn({
+  label,
+  caption,
+  children,
+}: {
+  label: string
+  caption: string
+  children: ReactNode
+}) {
+  return (
+    <div className="flex min-w-0 flex-1 flex-col gap-3">
+      <div>
+        <p className="text-[11px] font-semibold tracking-wide text-fd-muted-foreground uppercase">
+          {label}
+        </p>
+        <p className="mt-1 text-sm leading-snug text-fd-muted-foreground">{caption}</p>
+      </div>
+      <div className="min-w-0 rounded-lg border border-fd-border bg-fd-background p-3">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+/** Default `EmbedCard` vs themed `EmbedCard` for the same Reddit URL. */
+export function CustomRenderingEmbedCardCompare() {
+  return (
+    <div className="not-prose my-8 grid gap-8 lg:grid-cols-2">
+      <CompareColumn
+        label="Before"
+        caption="Default `EmbedCard` — no `theme` prop, standard chrome and system font."
+      >
+        <EmbedCard url={REDDIT_POST_URL} />
+      </CompareColumn>
+      <CompareColumn
+        label="After"
+        caption="Same URL with `theme`: warm paper background, rust accent, tighter radius, and serif `fontFamily`."
+      >
+        <EmbedCard
+          url={REDDIT_POST_URL}
+          theme={{
+            accentColor: "#c2410c",
+            background: "#fffbeb",
+            borderColor: "rgba(180, 140, 90, 0.35)",
+            textColor: "#431407",
+            mutedColor: "rgba(67, 24, 7, 0.72)",
+            radius: 12,
+            fontFamily: "Georgia, 'Times New Roman', serif",
+          }}
+        />
+      </CompareColumn>
+    </div>
+  )
+}
+
+/** `RedditEmbedPreview` with default CSS variables vs editorial overrides + chrome. */
+export function CustomRenderingRedditPreviewCompare() {
+  const defaultVars = createThemeVariables()
+  const editorialVars = createThemeVariables({
+    accentColor: "#b91c1c",
+    background: "#fff1f2",
+    borderColor: "rgba(185, 28, 28, 0.28)",
+    textColor: "#450a0a",
+    mutedColor: "rgba(69, 10, 10, 0.65)",
+    radius: 10,
+    fontFamily: "Georgia, 'Times New Roman', serif",
+  })
+
+  return (
+    <div className="not-prose my-8 grid gap-8 lg:grid-cols-2">
+      <CompareColumn
+        label="Before"
+        caption="`RedditEmbedPreview` inside a wrapper with `createThemeVariables()` only — default palette, no extra chrome."
+      >
+        <div style={defaultVars as CSSProperties}>
+          <RedditEmbedPreview postUrl={REDDIT_POST_URL} />
+        </div>
+      </CompareColumn>
+      <CompareColumn
+        label="After"
+        caption="Custom `createThemeVariables({ ... })` on the wrapper, plus `className` and `style` on the preview for ring and soft shadow."
+      >
+        <div style={editorialVars as CSSProperties}>
+          <RedditEmbedPreview
+            postUrl={REDDIT_POST_URL}
+            className="ring-2 ring-rose-200/80 ring-offset-2 ring-offset-[#fff1f2]"
+            style={{ boxShadow: "0 14px 44px rgba(185, 28, 28, 0.1)" }}
+          />
+        </div>
+      </CompareColumn>
+    </div>
+  )
+}

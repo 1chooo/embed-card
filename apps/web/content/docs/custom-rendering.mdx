@@ -32,6 +32,12 @@ Use `<EmbedCard url="..." />` when you want the full styled card out of the box 
 
 The `theme.fontFamily` field sets `--embed-card-font-family` on the root element, which is picked up by the inner Reddit preview card and any other subcomponents.
 
+### Live: default vs customized
+
+Same Reddit thread URL in both columns — only the `theme` prop changes. Scroll horizontally on small viewports if the cards stack.
+
+<CustomRenderingEmbedCardCompare />
+
 ---
 
 ## When NOT to use `EmbedCard` directly
@@ -306,6 +312,12 @@ Both versions have identical logic — the choice is purely cosmetic.
 
 If you want to use the package's `RedditEmbedPreview` component but need to apply project-specific
 styles, pass `className` and/or `style`:
+
+### Live: default variables vs editorial wrapper
+
+Left: preview with `createThemeVariables()` only (package defaults). Right: custom theme on the wrapper plus `className` / `style` on `RedditEmbedPreview` for extra chrome.
+
+<CustomRenderingRedditPreviewCompare />
 
 ```tsx
 import { RedditEmbedPreview } from "embed-card"
