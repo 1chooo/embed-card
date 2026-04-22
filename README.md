@@ -1,6 +1,6 @@
 # embed-card
 
-URL embed cards for **YouTube, X, Reddit, Vimeo, Google Maps**, and a link-preview fallback—usable from **React** or as a **web component**. This repo is a **pnpm + Turborepo** monorepo: the publishable package lives in `packages/embed-card`, and `apps/web` is the [live demo and docs](https://1chooo.com/embed-card).
+URL embed cards for **YouTube, X, Reddit, Vimeo, Google Maps**, and a link-preview fallback—usable from **React** or as a **web component**. This repo is a **pnpm + Turborepo** monorepo: the publishable package lives in `packages/embed-card`, and `apps/web` is the [live demo and docs](https://1chooo.com/embed-card). For hostname rules, URL patterns, renderer types (iframe vs Reddit client preview), and how to customize, see the docs page [Supported platforms](https://1chooo.com/embed-card/docs/platforms).
 
 **Requirements:** [Node](https://nodejs.org/) 20+ and [pnpm](https://pnpm.io/) 9 (see `packageManager` in the root `package.json`).
 
@@ -27,13 +27,14 @@ export function Demo() {
 }
 ```
 
-**Other entry points:** `embed-card/manual` (resolve/render without the full card UI), `embed-card/web-component` (custom element + `registerEmbedCard()`). See `packages/embed-card` and [`examples/`](examples/) for more.
+**Other entry points:** `embed-card/manual` (resolve/render without the full card UI), `embed-card/web-component` (custom element + `registerEmbedCard()`), `embed-card/next-themes` (`ThemedEmbedCard` — forwards site theme from [`next-themes`](https://github.com/pacocoursey/next-themes)). See `packages/embed-card` and [`examples/`](examples/) for more.
 
 ## What the package exposes
 
 - `EmbedCard` — styled card for React / Next.js (`"use client"` where needed)
+- `ThemedEmbedCard` — same props as `EmbedCard`, from `embed-card/next-themes`, for apps that already use `next-themes`
 - `registerEmbedCard()` / custom element — use without React
-- `resolveEmbed()` and provider helpers — built-ins plus custom `EmbedProvider`s
+- `resolveEmbed()` and provider helpers — built-ins plus custom `EmbedProvider`s (also re-exported on the main entry for convenience)
 
 ## Monorepo commands
 

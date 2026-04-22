@@ -17,8 +17,11 @@ export default function Layout({ children }: { children: ReactNode }) {
             <a className="font-medium text-fd-foreground underline-offset-2 hover:underline" href="/docs/playground">
               playground
             </a>{" "}
-            to try URLs and themes, or follow these guides to wire the package
-            into React, a custom element, or a manual render path.
+            to try URLs and themes. Read{" "}
+            <a className="font-medium text-fd-foreground underline-offset-2 hover:underline" href="/docs/platforms">
+              Supported platforms
+            </a>{" "}
+            for which URLs map to which embed, then follow these guides to wire the package into React, a custom element, or a manual render path.
           </div>
         ),
       }}

@@ -13,6 +13,8 @@ import { EmbedCard } from "embed-card"
 <EmbedCard url="https://www.reddit.com/r/github/comments/1j6jga7/i_rebuilt_my_personal_portfolio_using_nextjsits/" />
 ```
 
+Optional **`ctaLabel`** overrides the default **Open original** label on **link-preview fallbacks** only; iframe and Reddit embeds ignore it.
+
 ## Why start with React?
 
 - The demo app already runs on Next.js
@@ -20,6 +22,10 @@ import { EmbedCard } from "embed-card"
 - The same package can still power non-React apps through other exports
 
 Reddit post URLs render a client-side preview: `EmbedCard` loads thread metadata from `https://www.reddit.com/.../comments/....json` in the visitor’s browser and paints a compact Reddit-styled card, which avoids server-side fetches that Reddit often blocks.
+
+## Dark mode and `next-themes`
+
+If the app uses `ThemeProvider` from [`next-themes`](https://github.com/pacocoursey/next-themes), import **`ThemedEmbedCard`** from `embed-card/next-themes` so embeds follow the same resolved theme as the rest of the layout (this docs site uses the same pattern in the playground preview). Same props as `EmbedCard`; an explicit `theme.appearance` still overrides when you need it. See [Getting Started](../getting-started) (section **Match the site theme (next-themes)**) and [Custom Rendering → Dark mode and appearance](../custom-rendering#dark-mode-and-appearance).
 
 ## Runnable examples
 

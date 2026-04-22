@@ -11,6 +11,8 @@ description: Install the package, render your first card, try the interactive pl
 pnpm add embed-card
 ```
 
+Not sure which hosts or URL shapes are supported? Read **[Supported platforms →](./platforms)** (YouTube, X, Reddit threads, Google Maps, Vimeo, link fallback, and invalid input).
+
 ## React usage
 
 ```tsx
@@ -29,7 +31,7 @@ You can try links without wiring up a project first:
 
 - **Docs:** [Playground](/docs/playground) — paste a URL or pick a sample, watch the preview update, then copy the generated snippet from the code block (the same flow as on the site home page under **Playground**).
 
-The snippet shows the minimal `EmbedCard` usage with **`url` only**. Optional styling and light/dark still use the `theme` prop, as in the next section.
+The snippet shows the minimal `EmbedCard` usage with **`url` only**. The live preview uses `ThemedEmbedCard` from `embed-card/next-themes` so it follows this docs site's light/dark toggle; copy-paste code stays the smallest API. Optional styling and light/dark still use the `theme` prop, as in the next section (or `ThemedEmbedCard` when you use `next-themes` in your app).
 
 ## Theme the card
 
@@ -83,7 +85,25 @@ Pass `appearance` to control whether the embed surface uses a light or dark pale
 | `"dark"` | Always use the dark palette. |
 | `"system"` | Follow `prefers-color-scheme`; falls back to light on SSR. |
 
-See [Custom Rendering → Dark mode and appearance](./custom-rendering#dark-mode-and-appearance) for a full example wiring this to `next-themes`.
+### Match the site theme (next-themes)
+
+If the app already uses [`next-themes`](https://github.com/pacocoursey/next-themes) (for example with Fumadocs or Next.js), install it in your project and use the package wrapper instead of reimplementing theme detection:
+
+```bash
+pnpm add next-themes
+```
+
+```tsx
+import { ThemedEmbedCard } from "embed-card/next-themes"
+
+export function ArticleEmbed() {
+  return <ThemedEmbedCard url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+}
+```
+
+`ThemedEmbedCard` accepts the same props as `EmbedCard`. If you set `theme.appearance` to `"light"`, `"dark"`, or `"system"`, that value still overrides the site theme from `next-themes`.
+
+To wire `EmbedCard` manually with `useTheme()`, see [Custom Rendering → Dark mode and appearance](./custom-rendering#dark-mode-and-appearance).
 
 ## Starter projects (full apps)
 

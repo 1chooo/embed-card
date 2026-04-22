@@ -1,0 +1,138 @@
+---
+title: Supported platforms
+description: Which URLs map to which built-in embed, how the default card renders them, and how to theme or replace behavior.
+---
+
+# Supported platforms
+
+The package ships a **fixed ordered list** of built-in providers (`defaultProviders`). For each pasted URL, the first provider whose `match` succeeds gets a chance to `resolve` it; if every provider returns `null` for that URL, the card falls back to a **generic link preview**. Invalid or unparseable input uses a small **invalid URL** state instead.
+
+Use them the same everywhere: [`<EmbedCard url="…" />`](./frameworks/react), [`<embed-card url="…">`](./frameworks/web-component), or [`resolveEmbed(url)`](./frameworks/manual-rendering) with the default registry.
+
+| Platform | Typical hosts | Card behavior |
+| --- | --- | --- |
+| [YouTube](#youtube) | `youtube.com`, `youtu.be`, `m.youtube.com` | Responsive **iframe** embed (`youtube.com/embed/…`) |
+| [X / Twitter](#x-and-twitter) | `x.com`, `twitter.com` | **Iframe** Tweet widget (`platform.twitter.com/embed/Tweet.html`) |
+| [Reddit](#reddit) | `reddit.com`, `old.reddit.com` | **Client preview** (browser `fetch` to the public `.json` thread API, not an iframe) |
+| [Google Maps](#google-maps) | `google.com/maps…` | **Iframe** map (`output=embed` added when resolving) |
+| [Vimeo](#vimeo) | `vimeo.com`, `player.vimeo.com` | **Iframe** player |
+| [Link preview](#generic-link-preview) | Any other valid `https://` URL | In-card **link** surface with title and hostname |
+| [Invalid input](#invalid-url) | Non-URL or empty string | Inline **message** prompting for a full URL |
+
+Try live samples in the [Playground](/docs/playground).
+
+---
+
+## YouTube
+
+**Match:** `youtube.com`, `www.youtube.com`, `m.youtube.com`, `youtu.be`.
+
+**Resolve:** Needs a recognizable **video id** — for example `?v=` on watch URLs, `/embed/`, `/shorts/`, `/live/`, or the path segment on `youtu.be/…`. If the URL is on YouTube but no id is found, resolution fails and the next providers run; usually you end up on the **link preview** row.
+
+**Customize:** Same as other iframe providers: `theme` (accent, radius, shadow, font, appearance) wraps the iframe surface. Provider accent defaults to YouTube red unless you override `accentColor`.
+
+```tsx
+import { EmbedCard } from "embed-card"
+
+<EmbedCard url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+```
+
+---
+
+## X and Twitter
+
+**Match:** `x.com`, `twitter.com`, `www.twitter.com`.
+
+**Resolve:** Path must include **`/status/<numeric id>`** (a single post). Profile or home URLs do not resolve as embeds.
+
+**Customize:** The Tweet iframe **theme** (`light` / `dark`) follows the card’s resolved appearance when the URL is resolved (so it tracks `theme.appearance` and `next-themes` flows the same as the rest of the card). Other `theme` fields still apply to the surrounding surface.
+
+```tsx
+<EmbedCard url="https://x.com/1chooo___/status/2028573993972969585" />
+```
+
+---
+
+## Reddit
+
+**Match:** `reddit.com`, `www.reddit.com`, `old.reddit.com`.
+
+**Resolve:** Path must contain **`/comments/`** (a post thread). The card loads **`postUrl + ".json"`** in the visitor’s browser and renders a compact thread preview (no `redditmedia` iframe).
+
+**Customize:** Card chrome uses `theme` like other providers. For **fully custom markup** while reusing the same data helpers, see [Custom Rendering](./custom-rendering) and [Manual Rendering](./frameworks/manual-rendering).
+
+```tsx
+<EmbedCard url="https://www.reddit.com/r/github/comments/1j6jga7/i_rebuilt_my_personal_portfolio_using_nextjsits/" />
+```
+
+---
+
+## Google Maps
+
+**Match:** `google.com`, `www.google.com`, or `maps.google.com`, with a pathname starting with **`/maps`**.
+
+**Resolve:** The resolver copies your URL and sets **`output=embed`** for the iframe `src`. Use normal Maps share links; the card adapts them for embedding.
+
+**Customize:** Default accent is Maps green; override with `theme.accentColor` as needed. Aspect ratio is **`4 / 3`** with a minimum height so small viewports still get a usable map.
+
+```tsx
+<EmbedCard url="https://www.google.com/maps?q=Tokyo+Station&output=embed" />
+```
+
+---
+
+## Vimeo
+
+**Match:** `vimeo.com`, `www.vimeo.com`, `player.vimeo.com`.
+
+**Resolve:** Needs a **numeric video id** in the path (standard Vimeo URLs).
+
+**Customize:** Same iframe + `theme` story as YouTube.
+
+```tsx
+<EmbedCard url="https://vimeo.com/76979871" />
+```
+
+---
+
+## Generic link preview
+
+**When:** No built-in provider both matches and returns a resolved embed (including “known host but wrong path shape”).
+
+**Behavior:** A **link** renderer: hostname as title line, short description, and a call-to-action. The built-in fallback descriptor sets a default CTA label on the resolved payload; you can still override the label shown in the UI with the **`ctaLabel`** prop on `EmbedCard` or the **`cta-label`** attribute on `<embed-card>`.
+
+```tsx
+<EmbedCard url="https://example.com/article" ctaLabel="Read article" />
+```
+
+---
+
+## Invalid URL
+
+**When:** The string is not a valid URL (and the small “add `https://`” heuristic still cannot parse it), or you called `resolveEmbed` with `{ includeFallback: false }` and nothing matched.
+
+**Behavior:** A dedicated **invalid** renderer with guidance text (not a network fetch).
+
+---
+
+## How to use (all platforms)
+
+1. Install **`embed-card`** and render with a **single `url` string** (see [Getting Started](./getting-started)).
+2. Optional: pass **`theme`** for colors, radius, shadow, font, and light / dark / system appearance.
+3. Apps using **`next-themes`**: prefer **`ThemedEmbedCard`** from **`embed-card/next-themes`** so appearance matches the site ([Getting Started → Match the site theme](./getting-started#match-the-site-theme-next-themes)).
+
+Web component equivalents: `accent-color`, `radius`, `shadow`, `font-family`, `appearance`, and `cta-label` — see [Web Component](./frameworks/web-component).
+
+---
+
+## How to customize
+
+| Goal | Where to go |
+| --- | --- |
+| Tweak colors, radius, shadow, fonts, light/dark | [Getting Started → Theme the card](./getting-started#theme-the-card), [Custom Rendering → Theming reference](./custom-rendering#theming-reference) |
+| Match site dark mode with `next-themes` | [Getting Started](./getting-started#match-the-site-theme-next-themes), [Custom Rendering](./custom-rendering#dark-mode-and-appearance) |
+| Override link-preview button text | **`ctaLabel`** / **`cta-label`** ([React](./frameworks/react), [Web Component](./frameworks/web-component)) |
+| Add Spotify, internal docs, or other hosts | [Provider Registry](./registry) — `createEmbedProvider` + `providers={[…]}` |
+| Replace card UI entirely, reuse data | [Manual Rendering](./frameworks/manual-rendering), [Custom Rendering](./custom-rendering) |
+
+Provider order is **only** changed when you pass your own **`providers`** array (prepend custom providers so their `match` runs first, then spread `defaultProviders` if you still want the built-ins).

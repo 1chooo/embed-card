@@ -350,7 +350,32 @@ Pass `appearance` to control whether the embed surface (gradients, borders, back
 />
 ```
 
-When the site's own dark mode is managed by a library such as `next-themes`, read `resolvedTheme` and pass it through:
+### Recommended: `ThemedEmbedCard` with `next-themes`
+
+When the site already uses [`next-themes`](https://github.com/pacocoursey/next-themes), prefer the dedicated export. It maps `resolvedTheme` (and the `dark` class on `html` when `attribute: "class"`) onto `theme.appearance`, which avoids a flash or hydration mismatch compared to hand-rolled `useTheme()` logic in some layouts.
+
+```bash
+pnpm add next-themes
+```
+
+```tsx
+import { ThemedEmbedCard } from "embed-card/next-themes"
+
+export function ArticleEmbed() {
+  return (
+    <ThemedEmbedCard
+      url="https://vimeo.com/76979871"
+      theme={{ accentColor: "#7c3aed" }}
+    />
+  )
+}
+```
+
+An explicit `theme.appearance` on the component still wins, so you can force light or dark for a single embed when needed.
+
+### Manual wiring with `useTheme()`
+
+If you cannot import from `embed-card/next-themes`, read `resolvedTheme` from `next-themes` and pass `theme.appearance` yourself:
 
 ```tsx
 "use client"

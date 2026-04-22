@@ -27,17 +27,22 @@ The monorepo uses **pnpm** workspaces and **Turborepo**: root `pnpm build` and `
 
 ## Built-in providers
 
-- YouTube
-- X / Twitter
-- Reddit (styled thread preview from Reddit’s public `.json` API in the browser, not `redditmedia` iframes)
-- Google Maps
-- Vimeo
-- Fallback link preview for unmatched URLs
+See **[Supported platforms](./platforms)** for hostname rules, which URL shapes resolve, iframe vs client preview behavior, and a customization map (theming, `ctaLabel`, custom providers, manual rendering).
+
+Summary:
+
+- [YouTube](./platforms#youtube)
+- [X / Twitter](./platforms#x-and-twitter)
+- [Reddit](./platforms#reddit) (styled thread preview from Reddit’s public `.json` API in the browser, not `redditmedia` iframes)
+- [Google Maps](./platforms#google-maps)
+- [Vimeo](./platforms#vimeo)
+- [Fallback link preview](./platforms#generic-link-preview) for unmatched URLs
 
 ## Design goal
 
 `EmbedCard` renders a single embed surface — the content itself, with no surrounding title, description, or footer chrome. Consumers should only need **one install** for the common path, while still getting:
 
 - A React component for Next.js and React apps
+- Optional `ThemedEmbedCard` from `embed-card/next-themes` when the app already uses [`next-themes`](https://github.com/pacocoursey/next-themes) for document-level dark mode
 - A web component export for other frameworks
 - Low-level resolver helpers for manual rendering and custom provider registries

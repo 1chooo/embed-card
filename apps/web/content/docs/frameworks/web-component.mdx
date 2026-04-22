@@ -25,6 +25,28 @@ Then use it anywhere HTML is allowed:
 
 The `shadow` attribute is optional (same as `theme.shadow` in React). Omit it for no drop shadow, or set it to any CSS `box-shadow` value (for example `0 20px 60px rgba(15, 23, 42, 0.12)`).
 
+For **fallback link previews** (URLs that do not match a built-in provider), the `cta-label` attribute overrides the default **Open original** label inside the card. It has no effect on iframe or Reddit embeds.
+
+```html
+<embed-card url="https://example.com" cta-label="Visit site"></embed-card>
+```
+
+## Styling the shadow tree
+
+The embed surface is a `<figure class="root" part="root">`. Expose one part for host-page CSS:
+
+| Part | Element |
+| --- | --- |
+| `root` | The card surface root (`<figure>`) |
+
+```css
+embed-card::part(root) {
+  border-radius: 18px;
+}
+```
+
+Older releases exposed additional shadow parts (`header`, `footer`, `preview`); those are removed—style `::part(root)` or rely on attributes and CSS variables from [Custom Rendering → Theming reference](../custom-rendering#theming-reference).
+
 ## Dark mode
 
 The `appearance` attribute controls the embed surface palette — the same three values as the React `theme.appearance` prop:
