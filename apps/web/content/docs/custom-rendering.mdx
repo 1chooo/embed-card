@@ -1,0 +1,352 @@
+---
+title: Custom Rendering
+description: A real-world case study showing how to integrate embed-card into a project with its own design system — keeping full styling control while reusing the package's data layer.
+---
+
+# Custom Rendering
+
+This page walks through how [1chooo.com](https://github.com/1chooo/1chooo.com) integrated `embed-card` into an existing Next.js site that uses a bespoke Tailwind design system (`rurikon-*` color tokens, `font-serif` typography). The result is a set of components that feel native to the site while removing ~100 lines of duplicated data-fetching logic.
+
+The patterns here apply to any project that:
+- Has an established design language that should not be overridden by the default card styles
+- Needs a Reddit thread preview but wants to keep custom Tailwind classes
+- Needs a Twitter/X post card using `react-tweet` (native server-side rendering)
+
+---
+
+## When to use `EmbedCard` directly
+
+Use `<EmbedCard url="..." />` when you want the full styled card out of the box and are happy to theme it via the `theme` prop:
+
+```tsx
+<EmbedCard
+  url="https://www.reddit.com/r/nextjs/comments/..."
+  theme={{
+    accentColor: "#ff4500",
+    background: "#fefefe",
+    borderColor: "#e5e0d8",
+    fontFamily: "Georgia, 'Times New Roman', serif",
+  }}
+/>
+```
+
+The `theme.fontFamily` field sets `--embed-card-font-family` on the root element, which is picked up by the inner Reddit preview card and any other subcomponents.
+
+---
+
+## When NOT to use `EmbedCard` directly
+
+Some components are better left as fully custom renders. A good example is a **Tweet card** built with `react-tweet`.
+
+### Twitter / X — native rendering with `react-tweet`
+
+`embed-card` handles X/Twitter via an `<iframe>` (the standard Twitter embed widget). If you want a server-rendered, visually native card that matches your site's typography and color system, `react-tweet` is a better fit. The two are complementary, not competing.
+
+```tsx
+// components/tweet-card.tsx — server component (no embed-card needed here)
+import { Suspense } from "react"
+import { enrichTweet } from "react-tweet"
+import { getTweet } from "react-tweet/api"
+
+export async function TweetCard({ id }: { id: string }) {
+  const tweet = await getTweet(id).catch(() => undefined)
+  if (!tweet) return <TweetNotFound />
+
+  return (
+    <Suspense
+      fallback={
+        <div className="my-8 border border-rurikon-border bg-[#fefefe] h-40 animate-pulse font-serif" />
+      }
+    >
+      <MagicTweet tweet={tweet} />
+    </Suspense>
+  )
+}
+
+function MagicTweet({ tweet }: { tweet: ReturnType<typeof getTweet> extends Promise<infer T> ? T : never }) {
+  const enriched = enrichTweet(tweet!)
+  return (
+    <div className="my-8 border border-rurikon-border bg-[#fefefe] px-6 py-6 font-serif sm:px-8">
+      {/* header, body, media, date — fully controlled */}
+    </div>
+  )
+}
+```
+
+**Key point:** Keep `TweetCard` as a custom component. Add `react-tweet` to your project:
+
+```bash
+pnpm add react-tweet
+```
+
+---
+
+## Reddit — data-layer reuse, custom rendering
+
+The 1chooo.com `RedditEmbed` component originally duplicated every data helper from `embed-card`:
+`fetchRedditPost`, `formatScore`, `timeAgo`, `RedditPost`, `RedditVideo`. These are all
+already exported from `embed-card`, so the migration simply replaces the local definitions
+with package imports.
+
+### Before (duplicated local code)
+
+```tsx
+// Local types and helpers — ~50 lines of duplication
+interface RedditVideo { fallback_url: string; ... }
+interface RedditPost { title: string; score: number; ... }
+
+async function fetchRedditPost(url: string): Promise<RedditPost | null> {
+  const res = await fetch(`${url.replace(/\/$/, "")}.json?limit=1`)
+  ...
+}
+
+function formatScore(n: number) { ... }
+function timeAgo(utc: number) { ... }
+```
+
+### After (import from `embed-card`)
+
+```bash
+pnpm add embed-card
+```
+
+```tsx
+"use client"
+
+import {
+  fetchRedditPost,
+  formatRedditScore,
+  redditTimeAgo,
+  decodeRedditHtmlEntities,
+} from "embed-card"
+import type { RedditPostData } from "embed-card"
+```
+
+The rest of the component — all the Tailwind classes, `rurikon-*` color tokens, Lucide icons,
+`font-serif`, and the custom card layout — stays exactly the same. Only the data layer changes.
+
+### Full migrated component
+
+```tsx
+"use client"
+
+import { ArrowUp, MessageSquare } from "lucide-react"
+import { useState, useEffect } from "react"
+import {
+  fetchRedditPost,
+  formatRedditScore,
+  redditTimeAgo,
+  decodeRedditHtmlEntities,
+} from "embed-card"
+import type { RedditPostData } from "embed-card"
+import { RedditCopyLinkButton } from "@/components/reddit-copy-link-button"
+
+interface RedditEmbedProps {
+  url: string
+}
+
+export function RedditEmbed({ url }: RedditEmbedProps) {
+  const [post, setPost] = useState<RedditPostData | null | "loading">("loading")
+
+  useEffect(() => {
+    const ac = new AbortController()
+    fetchRedditPost(url, { signal: ac.signal }).then((result) => {
+      if (!ac.signal.aborted) setPost(result)
+    })
+    return () => ac.abort()
+  }, [url])
+
+  if (post === "loading") {
+    return (
+      <div className="my-8 border border-rurikon-border bg-[#fefefe] px-6 py-8 font-serif animate-pulse">
+        <div className="h-3 w-1/3 rounded bg-rurikon-border/60 mb-3" />
+        <div className="h-4 w-3/4 rounded bg-rurikon-border/60 mb-2" />
+        <div className="h-4 w-1/2 rounded bg-rurikon-border/40" />
+      </div>
+    )
+  }
+
+  if (!post) {
+    return (
+      <div className="my-8 border border-rurikon-border bg-[#fefefe] px-6 py-8 font-serif">
+        <p className="text-center text-sm text-rurikon-300">Post unavailable.</p>
+      </div>
+    )
+  }
+
+  const videoUrl = post.is_video
+    ? decodeRedditHtmlEntities(post.media?.reddit_video?.fallback_url ?? "") || null
+    : null
+
+  const posterUrl = post.preview?.images?.[0]?.source?.url
+    ? decodeRedditHtmlEntities(post.preview.images[0].source.url)
+    : undefined
+
+  const body =
+    post.is_self && post.selftext
+      ? post.selftext.length > 280
+        ? post.selftext.slice(0, 280).trimEnd() + "…"
+        : post.selftext
+      : null
+
+  const postHref = `https://www.reddit.com${post.permalink}`
+
+  return (
+    <div className="my-8 border border-rurikon-border bg-[#fefefe] font-serif">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-rurikon-border/40">
+        <div className="flex flex-col gap-0.5">
+          <a
+            href={`https://www.reddit.com/r/${post.subreddit}`}
+            target="_blank" rel="noreferrer"
+            className="text-xs font-semibold text-rurikon-500 hover:opacity-70 transition-opacity"
+          >
+            r/{post.subreddit}
+          </a>
+          <span className="text-[11px] text-rurikon-300">
+            Posted by u/{post.author} · {redditTimeAgo(post.created_utc)}
+          </span>
+        </div>
+      </div>
+
+      {/* Title + body */}
+      <div className="px-5 pt-4 pb-3">
+        <a href={postHref} target="_blank" rel="noreferrer"
+          className="text-sm font-medium text-rurikon-600 leading-snug hover:opacity-70 transition-opacity">
+          {post.title}
+        </a>
+        {body && (
+          <p className="mt-2 text-xs leading-relaxed text-rurikon-400 whitespace-pre-line">{body}</p>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between gap-y-2 gap-x-3 px-5 py-3 flex-wrap">
+        <div className="flex items-center gap-4 flex-wrap">
+          <span className="flex items-center gap-1 text-xs text-rurikon-300">
+            <ArrowUp className="size-3.5" />
+            {formatRedditScore(post.score)}
+          </span>
+          <a href={postHref} target="_blank" rel="noreferrer"
+            className="flex items-center gap-1 text-xs text-rurikon-300 hover:text-rurikon-500 transition-colors">
+            <MessageSquare className="size-3.5" />
+            {post.num_comments.toLocaleString()} comments
+          </a>
+          <RedditCopyLinkButton href={postHref} />
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+### What changed
+
+| Before | After |
+|---|---|
+| Local `interface RedditPost` | `RedditPostData` from `embed-card` |
+| Local `interface RedditVideo` | `RedditVideo` from `embed-card` |
+| Local `fetchRedditPost` | `fetchRedditPost` from `embed-card` (adds `AbortController` support) |
+| Local `formatScore` | `formatRedditScore` from `embed-card` |
+| Local `timeAgo` | `redditTimeAgo` from `embed-card` |
+| Manual `&amp;` replace | `decodeRedditHtmlEntities` from `embed-card` |
+| No cleanup on URL change | `AbortController` cleanup via `useEffect` return |
+
+---
+
+## Reddit copy-link button — build your own
+
+`embed-card` now exports a `RedditCopyLinkButton` component (inline-style, no Tailwind dependency):
+
+```tsx
+import { RedditCopyLinkButton } from "embed-card"
+
+<RedditCopyLinkButton href={postHref} />
+```
+
+If your project uses Tailwind and Lucide, you may prefer to keep a custom version that matches your design system — exactly as 1chooo.com does:
+
+```tsx
+// components/reddit-copy-link-button.tsx
+"use client"
+
+import { Link, Check } from "lucide-react"
+import { useState } from "react"
+
+export function RedditCopyLinkButton({ href }: { href: string }) {
+  const [copied, setCopied] = useState(false)
+
+  function handleCopy() {
+    navigator.clipboard.writeText(href).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="flex items-center gap-1 text-xs text-rurikon-300 hover:text-rurikon-500 transition-colors cursor-pointer"
+    >
+      {copied ? (
+        <><Check className="size-3.5" />Copied!</>
+      ) : (
+        <><Link className="size-3.5" />Copy link</>
+      )}
+    </button>
+  )
+}
+```
+
+Both versions have identical logic — the choice is purely cosmetic.
+
+---
+
+## Using `RedditEmbedPreview` with style overrides
+
+If you want to use the package's `RedditEmbedPreview` component but need to apply project-specific
+styles, pass `className` and/or `style`:
+
+```tsx
+import { RedditEmbedPreview } from "embed-card"
+
+<RedditEmbedPreview
+  postUrl="https://www.reddit.com/r/github/comments/1j6jga7/..."
+  className="my-8 font-serif"
+  style={{
+    "--embed-card-border": "rgba(180, 160, 120, 0.25)",
+    "--embed-card-font-family": "Georgia, 'Times New Roman', serif",
+  } as React.CSSProperties}
+/>
+```
+
+The CSS variables set on the wrapper are inherited by the inner card, which references
+`var(--embed-card-font-family, system-ui, ...)` for its font stack.
+
+---
+
+## Theming reference
+
+The full set of CSS variables accepted by `embed-card` components:
+
+| Variable | `EmbedCardTheme` field | Default |
+|---|---|---|
+| `--embed-card-accent` | `accentColor` | `#111827` |
+| `--embed-card-background` | `background` | `rgba(255,255,255,0.98)` |
+| `--embed-card-border` | `borderColor` | `rgba(15,23,42,0.12)` |
+| `--embed-card-text` | `textColor` | `#0f172a` |
+| `--embed-card-muted` | `mutedColor` | `rgba(15,23,42,0.62)` |
+| `--embed-card-radius` | `radius` | `24px` |
+| `--embed-card-shadow` | `shadow` | `none` |
+| `--embed-card-font-family` | `fontFamily` | system-ui stack |
+
+You can use these variables directly on any wrapper div when you don't want to go through `EmbedCard`:
+
+```tsx
+<div style={{
+  "--embed-card-border": "#e5e0d8",
+  "--embed-card-font-family": "'Lora', serif",
+} as React.CSSProperties}>
+  <RedditEmbedPreview postUrl="..." />
+</div>
+```

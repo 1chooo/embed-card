@@ -12,8 +12,7 @@ import {
 } from "./reddit-data"
 
 const cardShell: CSSProperties = {
-  fontFamily:
-    'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  fontFamily: "var(--embed-card-font-family, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif)",
   background: "#ffffff",
   color: "#1c1c1c",
   minHeight: "280px",
@@ -26,7 +25,11 @@ const linkBase: CSSProperties = {
   textDecoration: "none",
 }
 
-function RedditCopyLinkButton({ href }: { href: string }) {
+export interface RedditCopyLinkButtonProps {
+  href: string
+}
+
+export function RedditCopyLinkButton({ href }: RedditCopyLinkButtonProps) {
   const [copied, setCopied] = useState(false)
 
   function handleCopy() {
@@ -125,7 +128,15 @@ function IconComment() {
   )
 }
 
-function RedditCardLoaded({ post }: { post: RedditPostData }) {
+function RedditCardLoaded({
+  post,
+  className,
+  style,
+}: {
+  post: RedditPostData
+  className?: string
+  style?: CSSProperties
+}) {
   const reactId = useId()
   const idPrefix = reactId.replace(/:/g, "")
 
@@ -148,7 +159,7 @@ function RedditCardLoaded({ post }: { post: RedditPostData }) {
   const borderSoft = "color-mix(in srgb, var(--embed-card-border) 70%, transparent)"
 
   return (
-    <div style={cardShell}>
+    <div className={className} style={{ ...cardShell, ...style }}>
       <div
         style={{
           display: "flex",
@@ -278,9 +289,11 @@ function RedditCardLoaded({ post }: { post: RedditPostData }) {
 
 export interface RedditEmbedPreviewProps {
   postUrl: string
+  className?: string
+  style?: CSSProperties
 }
 
-export function RedditEmbedPreview({ postUrl }: RedditEmbedPreviewProps) {
+export function RedditEmbedPreview({ postUrl, className, style }: RedditEmbedPreviewProps) {
   const [state, setState] = useState<"loading" | "error" | RedditPostData>("loading")
 
   useEffect(() => {
@@ -297,8 +310,10 @@ export function RedditEmbedPreview({ postUrl }: RedditEmbedPreviewProps) {
   if (state === "loading") {
     return (
       <div
+        className={className}
         style={{
           ...cardShell,
+          ...style,
           padding: "1.5rem",
           gap: "0.75rem",
           animation: "embed-card-pulse 1.4s ease-in-out infinite",
@@ -336,8 +351,10 @@ export function RedditEmbedPreview({ postUrl }: RedditEmbedPreviewProps) {
   if (state === "error") {
     return (
       <div
+        className={className}
         style={{
           ...cardShell,
+          ...style,
           placeContent: "center",
           padding: "2rem",
           textAlign: "center",
@@ -350,5 +367,5 @@ export function RedditEmbedPreview({ postUrl }: RedditEmbedPreviewProps) {
     )
   }
 
-  return <RedditCardLoaded post={state} />
+  return <RedditCardLoaded post={state} className={className} style={style} />
 }

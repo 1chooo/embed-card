@@ -17,6 +17,8 @@ export interface EmbedCardTheme {
   radius?: number | string
   /** Any valid CSS `box-shadow`. Omit to use the package default (no shadow). */
   shadow?: string
+  /** Any valid CSS `font-family` value. Defaults to system-ui sans-serif stack. */
+  fontFamily?: string
 }
 
 export interface IframeEmbedRenderer {
