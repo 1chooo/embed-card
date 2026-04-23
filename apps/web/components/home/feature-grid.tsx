@@ -30,7 +30,7 @@ export function FeatureGrid() {
       {items.map((item) => (
         <Link
           key={item.title}
-          className="group flex flex-col rounded-xl border border-fd-border bg-fd-background/80 p-5 shadow-sm transition hover:border-fd-ring/40 hover:bg-fd-muted/25 hover:shadow-md"
+          className="group flex flex-col rounded-sm border border-fd-border bg-fd-background/80 p-5 shadow-sm transition hover:border-fd-ring/40 hover:bg-fd-muted/25 hover:shadow-md"
           href={item.href}
         >
           <h3 className="text-sm font-semibold tracking-tight text-fd-foreground">

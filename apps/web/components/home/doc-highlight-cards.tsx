@@ -31,10 +31,10 @@ export function DocHighlightCards() {
       {cards.map(({ title, description, href, icon: Icon }) => (
         <Link
           key={href}
-          className="group relative flex flex-col overflow-hidden rounded-xl border border-fd-border bg-fd-card/50 p-5 shadow-sm ring-1 ring-transparent transition hover:border-fd-border hover:ring-fd-border/60 hover:shadow-md"
+          className="group relative flex flex-col overflow-hidden rounded-sm border border-fd-border bg-fd-card/50 p-5 shadow-sm ring-1 ring-transparent transition hover:border-fd-border hover:ring-fd-border/60 hover:shadow-md"
           href={href}
         >
-          <div className="mb-3 inline-flex size-9 items-center justify-center rounded-lg border border-fd-border bg-fd-background text-fd-foreground">
+          <div className="mb-3 inline-flex size-9 items-center justify-center rounded-sm border border-fd-border bg-fd-background text-fd-foreground">
             <Icon aria-hidden className="size-4" />
           </div>
           <h3 className="text-sm font-semibold tracking-tight text-fd-foreground">

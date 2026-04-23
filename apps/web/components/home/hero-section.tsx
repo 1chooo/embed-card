@@ -12,7 +12,7 @@ export function HeroSection({ preview }: HeroSectionProps) {
       <div className="min-w-0 space-y-8">
         <div className="space-y-5">
           <p className="inline-flex items-center gap-2">
-            <span className="rounded-full border border-fd-border bg-fd-muted/50 px-2.5 py-0.5 text-[11px] font-medium tracking-wide text-fd-muted-foreground uppercase">
+            <span className="rounded-sm border border-fd-border bg-fd-muted/50 px-2.5 py-0.5 text-[11px] font-medium tracking-wide text-fd-muted-foreground uppercase">
               Open source
             </span>
             <span className="text-[11px] font-medium text-fd-muted-foreground">
@@ -30,7 +30,7 @@ export function HeroSection({ preview }: HeroSectionProps) {
         </div>
         <div className="flex flex-wrap gap-3">
           <Link
-            className="inline-flex h-10 items-center gap-2 rounded-md bg-fd-primary px-4 text-sm font-medium text-fd-primary-foreground shadow-sm transition hover:opacity-90"
+            className="inline-flex h-10 items-center gap-2 rounded-sm bg-fd-primary px-4 text-sm font-medium text-fd-primary-foreground shadow-sm transition hover:opacity-90"
             href="/docs/getting-started"
           >
             <BookOpenText className="size-4" aria-hidden />
@@ -38,7 +38,7 @@ export function HeroSection({ preview }: HeroSectionProps) {
             <ArrowRight className="size-4 opacity-90" aria-hidden />
           </Link>
           <Link
-            className="inline-flex h-10 items-center gap-2 rounded-md border border-fd-border bg-fd-background px-4 text-sm font-medium text-fd-foreground shadow-sm transition hover:bg-fd-muted/50"
+            className="inline-flex h-10 items-center gap-2 rounded-sm border border-fd-border bg-fd-background px-4 text-sm font-medium text-fd-foreground shadow-sm transition hover:bg-fd-muted/50"
             href="#playground"
           >
             <PlayCircle className="size-4" aria-hidden />
@@ -61,7 +61,7 @@ export function HeroSection({ preview }: HeroSectionProps) {
       </div>
 
       <div className="min-w-0">
-        <div className="rounded-xl border border-fd-border bg-fd-card/60 p-4 shadow-sm ring-1 ring-fd-border/40 sm:p-5">
+        <div className="rounded-sm border border-fd-border bg-fd-card/60 p-4 shadow-sm ring-1 ring-fd-border/40 sm:p-5">
           {preview}
         </div>
       </div>

@@ -32,7 +32,7 @@ export function InstallCommand() {
     <div className="not-prose space-y-3">
       <div
         aria-label="Package manager"
-        className="inline-flex rounded-lg border border-fd-border bg-fd-muted/40 p-0.5"
+        className="inline-flex rounded-sm border border-fd-border bg-fd-muted/40 p-0.5"
         role="tablist"
       >
         {(["pnpm", "npm", "yarn"] as const).map((key) => (
@@ -41,8 +41,8 @@ export function InstallCommand() {
             aria-selected={pm === key}
             className={
               pm === key
-                ? "rounded-md bg-fd-background px-3 py-1.5 text-xs font-medium text-fd-foreground shadow-sm ring-1 ring-fd-border/60 transition"
-                : "rounded-md px-3 py-1.5 text-xs font-medium text-fd-muted-foreground transition hover:text-fd-foreground"
+                ? "rounded-sm bg-fd-background px-3 py-1.5 text-xs font-medium text-fd-foreground shadow-sm ring-1 ring-fd-border/60 transition"
+                : "rounded-sm px-3 py-1.5 text-xs font-medium text-fd-muted-foreground transition hover:text-fd-foreground"
             }
             onClick={() => setPm(key)}
             role="tab"
@@ -54,7 +54,7 @@ export function InstallCommand() {
       </div>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
-        <div className="flex min-w-0 flex-1 items-center rounded-lg border border-fd-border bg-fd-card/80 px-3 py-2.5 font-mono text-[13px] leading-relaxed text-fd-foreground shadow-sm">
+        <div className="flex min-w-0 flex-1 items-center rounded-sm border border-fd-border bg-fd-card/80 px-3 py-2.5 font-mono text-[13px] leading-relaxed text-fd-foreground shadow-sm">
           <span className="select-all text-fd-muted-foreground" aria-hidden>
             $
           </span>
@@ -62,7 +62,7 @@ export function InstallCommand() {
         </div>
         <button
           aria-describedby={statusId}
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-fd-border bg-fd-background px-4 py-2.5 text-sm font-medium text-fd-foreground transition hover:bg-fd-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-primary/25"
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-sm border border-fd-border bg-fd-background px-4 py-2.5 text-sm font-medium text-fd-foreground transition hover:bg-fd-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-primary/25"
           onClick={copy}
           type="button"
         >

@@ -31,8 +31,8 @@ export function HomeEmbedPlayground({
   }, [initialUrl])
 
   const outerClass = [
-    "not-prose flex min-h-0 min-w-0 flex-col border border-fd-border bg-fd-background lg:flex-row lg:rounded-lg",
-    bleed ? "-mx-4 lg:-mx-6" : "overflow-hidden rounded-xl shadow-sm",
+    "not-prose flex min-h-0 min-w-0 flex-col border border-fd-border bg-fd-background lg:flex-row lg:rounded-sm",
+    bleed ? "-mx-4 lg:-mx-6" : "overflow-hidden rounded-sm shadow-sm",
   ].join(" ")
 
   return (
@@ -51,7 +51,7 @@ export function HomeEmbedPlayground({
             Options
           </span>
           <button
-            className="shrink-0 rounded-md border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
+            className="shrink-0 rounded-sm border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
             onClick={reset}
             type="button"
           >
@@ -65,7 +65,7 @@ export function HomeEmbedPlayground({
             <label className="mt-3 block text-[11px] font-medium text-fd-muted-foreground">
               URL
               <input
-                className="mt-1.5 h-10 w-full rounded-md border border-fd-border bg-fd-background px-3 font-mono text-xs text-fd-foreground outline-none transition placeholder:text-fd-muted-foreground focus-visible:border-fd-primary focus-visible:ring-2 focus-visible:ring-fd-primary/25"
+                className="mt-1.5 h-10 w-full rounded-sm border border-fd-border bg-fd-background px-3 font-mono text-xs text-fd-foreground outline-none transition placeholder:text-fd-muted-foreground focus-visible:border-fd-primary focus-visible:ring-2 focus-visible:ring-fd-primary/25"
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://..."
                 spellCheck={false}
@@ -98,7 +98,7 @@ export function HomeEmbedPlayground({
               lang="tsx"
               codeblock={{
                 className:
-                  "not-prose my-0 mt-3 max-h-56 overflow-auto rounded-md border border-fd-border bg-fd-muted/30 text-[11px] leading-relaxed text-fd-foreground",
+                  "not-prose my-0 mt-3 max-h-56 overflow-auto rounded-sm border border-fd-border bg-fd-muted/30 text-[11px] leading-relaxed text-fd-foreground",
               }}
             />
           </div>
