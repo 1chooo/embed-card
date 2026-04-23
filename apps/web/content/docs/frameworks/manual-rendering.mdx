@@ -8,7 +8,7 @@ description: Build your own UI on top of the low-level resolver helpers.
 For teams that want total control over markup, use the manual helpers:
 
 ```tsx
-import { RedditEmbedPreview } from "embed-card"
+import { RedditEmbedPreview, TikTokEmbedPreview } from "embed-card"
 import { resolveEmbed } from "embed-card/manual"
 
 export function CustomShell({ url }: { url: string }) {
@@ -28,6 +28,10 @@ export function CustomShell({ url }: { url: string }) {
     return <RedditEmbedPreview postUrl={embed.renderer.postUrl} />
   }
 
+  if (embed.renderer.type === "tiktok_client") {
+    return <TikTokEmbedPreview shareUrl={embed.renderer.shareUrl} />
+  }
+
   if (embed.renderer.type === "link") {
     return <a href={embed.renderer.href}>{embed.displayUrl}</a>
   }
@@ -37,6 +41,8 @@ export function CustomShell({ url }: { url: string }) {
 ```
 
 Reddit resolves to `reddit_client`: the package fetches `postUrl + ".json"` in the browser. For a fully custom card, call `fetchRedditPost(postUrl)` from `embed-card/manual` and shape the JSON yourself.
+
+TikTok **`vm.tiktok.com`** links resolve to `tiktok_client`: render **`TikTokEmbedPreview`** with `shareUrl`, or call **`fetchTikTokVideoIdFromOEmbed(shareUrl)`** from `embed-card/manual` if you only need the numeric video id for your own iframe.
 
 ## Why this export matters
 

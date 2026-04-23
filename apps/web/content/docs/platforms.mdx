@@ -16,6 +16,7 @@ Use them the same everywhere: [`<EmbedCard url="…" />`](./frameworks/react), [
 | [Reddit](#reddit) | `reddit.com`, `old.reddit.com` | **Client preview** (browser `fetch` to the public `.json` thread API, not an iframe) |
 | [Google Maps](#google-maps) | `google.com/maps…` | **Iframe** map (`output=embed` added when resolving) |
 | [Vimeo](#vimeo) | `vimeo.com`, `player.vimeo.com` | **Iframe** player |
+| [TikTok](#tiktok) | `tiktok.com`, `www`, `m`, `vm.tiktok.com` | **Iframe** embed (`tiktok.com/embed/v2/…`); **client oEmbed** for `vm.tiktok.com` short links |
 | [Instagram](#instagram) | `instagram.com`, `www`, `m` | **Iframe** embed (`instagram.com/…/embed/`) for `/p/`, `/reel/`, `/tv/` permalinks |
 | [Link preview](#generic-link-preview) | Any other valid `https://` URL | In-card **link** surface with title and hostname |
 | [Invalid input](#invalid-url) | Non-URL or empty string | Inline **message** prompting for a full URL |
@@ -92,6 +93,22 @@ import { EmbedCard } from "embed-card"
 
 ```tsx
 <EmbedCard url="https://vimeo.com/76979871" />
+```
+
+---
+
+## TikTok
+
+**Match:** `tiktok.com`, `www.tiktok.com`, `m.tiktok.com`, and **`vm.tiktok.com`** (short links).
+
+**Resolve:** Canonical URLs must include **`/@username/video/<numeric id>`** — the card uses TikTok’s **`https://www.tiktok.com/embed/v2/{id}`** iframe. **`vm.tiktok.com/{code}`** has no id in the path, so the card uses a **`tiktok_client`** renderer: the visitor’s browser calls TikTok’s public **[oEmbed](https://developers.tiktok.com/doc/embed-videos)** endpoint (`https://www.tiktok.com/oembed?url=…`), reads the video id from the response, then loads the same embed iframe. Profile, tag, or home URLs on TikTok hosts do not resolve as embeds (you get the **link preview** fallback).
+
+**Customize:** `theme` (accent, radius, shadow, font, **`appearance`**) controls the **card chrome** (`colorScheme`, borders, gradients) the same as other providers — including when you use **`ThemedEmbedCard`** from `embed-card/next-themes` so the shell tracks the site light/dark toggle. TikTok’s **inside-iframe** chrome is controlled by TikTok; there is no documented iframe flag comparable to X’s Tweet `theme` parameter.
+
+```tsx
+import { EmbedCard } from "embed-card"
+
+<EmbedCard url="https://www.tiktok.com/@scout2015/video/6718335390845095173" />
 ```
 
 ---

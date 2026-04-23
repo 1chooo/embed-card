@@ -60,11 +60,18 @@ export interface RedditClientEmbedRenderer {
   postUrl: string
 }
 
+export interface TikTokClientEmbedRenderer {
+  type: "tiktok_client"
+  /** Full share URL passed to TikTok’s oEmbed API (`vm.tiktok.com/…` or any resolvable link). */
+  shareUrl: string
+}
+
 export type EmbedRenderer =
   | IframeEmbedRenderer
   | LinkEmbedRenderer
   | InvalidEmbedRenderer
   | RedditClientEmbedRenderer
+  | TikTokClientEmbedRenderer
 
 export interface ResolvedEmbed {
   provider: string

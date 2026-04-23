@@ -10,7 +10,10 @@ export {
 export type { RedditPostData, RedditVideo } from "./reddit-data"
 export { RedditCopyLinkButton, RedditEmbedPreview } from "./reddit-embed"
 export type { RedditCopyLinkButtonProps, RedditEmbedPreviewProps } from "./reddit-embed"
+export { TikTokEmbedPreview } from "./tiktok-embed"
+export type { TikTokEmbedPreviewProps } from "./tiktok-embed"
 export { fetchInstagramOEmbed } from "./instagram-oembed"
+export { fetchTikTokVideoIdFromOEmbed } from "./tiktok-oembed"
 export type { InstagramOEmbedResult } from "./instagram-oembed"
 export { createEmbedProvider, defaultProviders } from "./providers"
 export { resolveEmbed } from "./resolve"
@@ -30,4 +33,5 @@ export type {
   ResolvedEmbed,
   ResolveEmbedContext,
   ResolveEmbedOptions,
+  TikTokClientEmbedRenderer,
 } from "./types"

@@ -1,4 +1,9 @@
 import { instagramEmbedSrc, isInstagramHost, parseInstagramPermalink } from "./instagram-url"
+import {
+  extractTikTokVideoId,
+  isTikTokEmbedHost,
+  isVmTikTokShortLink,
+} from "./tiktok-url"
 import type { EmbedProvider, ResolvedEmbed, ResolveEmbedContext } from "./types"
 
 function getDisplayUrl(url: URL): string {
@@ -54,14 +59,14 @@ function createInvalidEmbed(input: string): ResolvedEmbed {
     accentColor: "#dc2626",
     title: "Paste a valid URL",
     description:
-      "Embed Card accepts full links like YouTube videos, X posts, Instagram posts and reels, Reddit threads, Vimeo videos, and Google Maps.",
+      "Embed Card accepts full links like YouTube videos, TikTok videos, X posts, Instagram posts and reels, Reddit threads, Vimeo videos, and Google Maps.",
     site: "invalid-input",
     url: input,
     displayUrl: input,
     renderer: {
       type: "invalid",
       message:
-        "Use a full URL such as https://www.youtube.com/watch?v=... or https://www.instagram.com/reel/...",
+        "Use a full URL such as https://www.youtube.com/watch?v=..., https://www.tiktok.com/@user/video/..., or https://www.instagram.com/reel/...",
     },
   }
 }
@@ -279,6 +284,49 @@ const vimeoProvider: EmbedProvider = {
   },
 }
 
+const tiktokProvider: EmbedProvider = {
+  id: "tiktok",
+  label: "TikTok",
+  accentColor: "#010101",
+  match: (url) => isTikTokEmbedHost(url.hostname),
+  resolve: (url, _context?: ResolveEmbedContext) => {
+    const videoId = extractTikTokVideoId(url)
+
+    if (videoId) {
+      return createResolvedEmbed(url, tiktokProvider, {
+        title: "TikTok video",
+        description:
+          "TikTok URLs resolve to the official embed player; short vm.tiktok.com links load via TikTok’s public oEmbed endpoint.",
+        renderer: {
+          type: "iframe",
+          src: `https://www.tiktok.com/embed/v2/${videoId}`,
+          title: "Embedded TikTok video",
+          aspectRatio: "9 / 16",
+          maxWidth: 420,
+          minHeight: 640,
+          allow: "fullscreen",
+          allowFullScreen: true,
+          referrerPolicy: "strict-origin-when-cross-origin",
+        },
+      })
+    }
+
+    if (isVmTikTokShortLink(url)) {
+      return createResolvedEmbed(url, tiktokProvider, {
+        title: "TikTok video",
+        description:
+          "Short links resolve in the browser through TikTok’s oEmbed API, then render the same embed player.",
+        renderer: {
+          type: "tiktok_client",
+          shareUrl: url.toString(),
+        },
+      })
+    }
+
+    return null
+  },
+}
+
 export const defaultProviders: readonly EmbedProvider[] = [
   youtubeProvider,
   twitterProvider,
@@ -286,6 +334,7 @@ export const defaultProviders: readonly EmbedProvider[] = [
   redditProvider,
   googleMapsProvider,
   vimeoProvider,
+  tiktokProvider,
 ]
 
 export function createEmbedProvider(provider: EmbedProvider): EmbedProvider {

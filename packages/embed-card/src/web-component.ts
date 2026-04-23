@@ -1,6 +1,7 @@
 import { fetchRedditPost } from "./reddit-data"
 import { buildRedditCardElement } from "./reddit-shadow-dom"
 import { resolveEmbed } from "./resolve"
+import { fetchTikTokVideoIdFromOEmbed } from "./tiktok-oembed"
 import {
   createThemeVariables,
   resolveEmbedCardAppearance,
@@ -130,11 +131,22 @@ function renderContent(resolved: ResolvedEmbed, ctaLabel?: string): string {
     `
   }
 
+  if (resolved.renderer.type === "tiktok_client") {
+    return `
+      <div data-tiktok-mount style="min-height:260px;padding:1.5rem;">
+        <div style="height:10px;width:33%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 55%,transparent);margin-bottom:10px"></div>
+        <div style="height:14px;width:75%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 45%,transparent);margin-bottom:10px"></div>
+        <div style="height:14px;width:50%;border-radius:6px;background:color-mix(in srgb,var(--embed-card-border) 35%,transparent)"></div>
+      </div>
+    `
+  }
+
   return `<div class="invalid">${escapeHtml(resolved.renderer.message)}</div>`
 }
 
 export class EmbedCardElement extends HTMLElement {
   private redditHydrateAbort: AbortController | null = null
+  private tiktokHydrateAbort: AbortController | null = null
   private colorSchemeAbort: AbortController | null = null
 
   static observedAttributes = [
@@ -204,6 +216,8 @@ export class EmbedCardElement extends HTMLElement {
 
     this.redditHydrateAbort?.abort()
     this.redditHydrateAbort = null
+    this.tiktokHydrateAbort?.abort()
+    this.tiktokHydrateAbort = null
 
     const ctaLabel = this.getAttribute("cta-label") ?? undefined
     const ariaLabel =
@@ -213,10 +227,12 @@ export class EmbedCardElement extends HTMLElement {
           ? resolved.title || "Link preview"
           : resolved.renderer.type === "reddit_client"
             ? "Reddit embed"
-            : resolved.renderer.message
+            : resolved.renderer.type === "tiktok_client"
+              ? "TikTok embed"
+              : resolved.renderer.message
 
     let rootStyle =
-      resolved.renderer.type === "reddit_client"
+      resolved.renderer.type === "reddit_client" || resolved.renderer.type === "tiktok_client"
         ? `color-scheme:${resolvedMode};min-height:280px;padding:0;background:var(--embed-card-preview-canvas);${variablesToInlineStyle(variables)}`
         : `color-scheme:${resolvedMode};${variablesToInlineStyle(variables)}`
 
@@ -236,6 +252,66 @@ export class EmbedCardElement extends HTMLElement {
     `
 
     this.scheduleRedditHydration(resolved)
+    this.scheduleTikTokHydration(resolved)
+  }
+
+  private scheduleTikTokHydration(resolved: ResolvedEmbed): void {
+    if (resolved.renderer.type !== "tiktok_client") {
+      return
+    }
+
+    const ac = new AbortController()
+    this.tiktokHydrateAbort = ac
+    const shareUrl = resolved.renderer.shareUrl
+    const root = this.shadowRoot
+    if (!root) {
+      return
+    }
+
+    queueMicrotask(() => {
+      void this.hydrateTikTokEmbed(root, shareUrl, ac)
+    })
+  }
+
+  private async hydrateTikTokEmbed(
+    root: ShadowRoot,
+    shareUrl: string,
+    ac: AbortController
+  ): Promise<void> {
+    const mount = root.querySelector("[data-tiktok-mount]")
+    if (!(mount instanceof HTMLElement)) {
+      return
+    }
+
+    const videoId = await fetchTikTokVideoIdFromOEmbed(shareUrl, { signal: ac.signal })
+    if (ac.signal.aborted) {
+      return
+    }
+
+    if (!videoId) {
+      mount.replaceChildren()
+      mount.style.padding = "2rem"
+      mount.style.textAlign = "center"
+      mount.style.color = "var(--embed-card-muted)"
+      mount.style.fontSize = "0.9rem"
+      mount.textContent = "Video unavailable."
+      return
+    }
+
+    const wrap = root.ownerDocument.createElement("div")
+    wrap.style.cssText =
+      "position:relative;width:100%;aspect-ratio:9/16;min-height:min(640px,90vmin);max-width:420px;margin-inline:auto"
+
+    const iframe = root.ownerDocument.createElement("iframe")
+    iframe.setAttribute("allow", "fullscreen")
+    iframe.setAttribute("loading", "lazy")
+    iframe.setAttribute("referrerpolicy", "strict-origin-when-cross-origin")
+    iframe.setAttribute("src", `https://www.tiktok.com/embed/v2/${videoId}`)
+    iframe.setAttribute("title", "Embedded TikTok video")
+    iframe.style.cssText = "position:absolute;inset:0;width:100%;height:100%;border:none"
+
+    wrap.appendChild(iframe)
+    mount.replaceChildren(wrap)
   }
 
   private scheduleRedditHydration(resolved: ResolvedEmbed): void {

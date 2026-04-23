@@ -1,4 +1,5 @@
 export { fetchInstagramOEmbed } from "./instagram-oembed"
+export { fetchTikTokVideoIdFromOEmbed } from "./tiktok-oembed"
 export type { InstagramOEmbedResult } from "./instagram-oembed"
 export { fetchRedditPost } from "./reddit-data"
 export type { RedditPostData } from "./reddit-data"
@@ -13,4 +14,5 @@ export type {
   ResolvedEmbed,
   ResolveEmbedContext,
   ResolveEmbedOptions,
+  TikTokClientEmbedRenderer,
 } from "./types"

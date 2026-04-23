@@ -23,6 +23,10 @@ export const sampleEmbeds = [
     label: "Vimeo",
     url: "https://vimeo.com/76979871",
   },
+  {
+    label: "TikTok",
+    url: "https://www.tiktok.com/@scout2015/video/6718335390845095173",
+  },
 ] as const
 
 export const demoThemes = [

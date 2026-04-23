@@ -13,7 +13,7 @@ import { ThemedEmbedCard } from "embed-card/next-themes"
 const exampleUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 const description =
-  "Pass a URL and render the matching embed card—YouTube, X, Reddit, Maps, Vimeo, and more—without wiring one-off components."
+  "Pass a URL and render the matching embed card—YouTube, X, Reddit, Maps, Vimeo, TikTok, and more—without wiring one-off components."
 
 export const metadata: Metadata = {
   title: { absolute: "embed-card" },

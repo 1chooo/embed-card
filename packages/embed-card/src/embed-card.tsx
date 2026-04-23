@@ -4,6 +4,7 @@ import type { CSSProperties, HTMLAttributes } from "react"
 import { useSyncExternalStore } from "react"
 
 import { RedditEmbedPreview } from "./reddit-embed"
+import { TikTokEmbedPreview } from "./tiktok-embed"
 import { resolveEmbed } from "./resolve"
 import { createThemeVariables, resolveEmbedCardAppearance } from "./theme"
 import type { EmbedCardTheme, EmbedProvider } from "./types"
@@ -94,6 +95,7 @@ export function EmbedCard({
     if (resolved.renderer.type === "iframe") return resolved.title || "Embed"
     if (resolved.renderer.type === "link") return resolved.title || "Link preview"
     if (resolved.renderer.type === "reddit_client") return "Reddit embed"
+    if (resolved.renderer.type === "tiktok_client") return "TikTok embed"
     return resolved.renderer.message
   }
 
@@ -161,6 +163,30 @@ export function EmbedCard({
         style={combinedStyle}
       >
         <RedditEmbedPreview key={resolved.renderer.postUrl} postUrl={resolved.renderer.postUrl} />
+      </figure>
+    )
+  }
+
+  if (resolved.renderer.type === "tiktok_client") {
+    const combinedStyle = {
+      ...themeVars,
+      ...rootStyleBase,
+      colorScheme: resolvedMode,
+      minHeight: "280px",
+      padding: 0,
+      background: "var(--embed-card-preview-canvas)",
+      ...style,
+    } as CSSProperties
+
+    return (
+      <figure
+        {...props}
+        aria-label={getAriaLabel()}
+        className={cx("embed-card", className)}
+        data-provider={resolved.provider}
+        style={combinedStyle}
+      >
+        <TikTokEmbedPreview key={resolved.renderer.shareUrl} shareUrl={resolved.renderer.shareUrl} />
       </figure>
     )
   }
