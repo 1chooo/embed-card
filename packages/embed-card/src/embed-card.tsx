@@ -98,6 +98,13 @@ export function EmbedCard({
   }
 
   if (resolved.renderer.type === "iframe") {
+    const maxWidth =
+      resolved.renderer.maxWidth != null
+        ? typeof resolved.renderer.maxWidth === "number"
+          ? `${resolved.renderer.maxWidth}px`
+          : resolved.renderer.maxWidth
+        : undefined
+
     const combinedStyle = {
       ...themeVars,
       ...rootStyleBase,
@@ -105,6 +112,9 @@ export function EmbedCard({
       aspectRatio: resolved.renderer.aspectRatio ?? "16 / 9",
       ...(resolved.renderer.minHeight
         ? { minHeight: `min(${resolved.renderer.minHeight}px, 90vmin)` }
+        : {}),
+      ...(maxWidth != null
+        ? { maxWidth, width: "100%", marginInline: "auto" as const }
         : {}),
       ...style,
     } as CSSProperties

@@ -215,9 +215,18 @@ export class EmbedCardElement extends HTMLElement {
             ? "Reddit embed"
             : resolved.renderer.message
 
-    const rootStyle = resolved.renderer.type === "reddit_client"
-      ? `color-scheme:${resolvedMode};min-height:280px;padding:0;background:var(--embed-card-preview-canvas);${variablesToInlineStyle(variables)}`
-      : `color-scheme:${resolvedMode};${variablesToInlineStyle(variables)}`
+    let rootStyle =
+      resolved.renderer.type === "reddit_client"
+        ? `color-scheme:${resolvedMode};min-height:280px;padding:0;background:var(--embed-card-preview-canvas);${variablesToInlineStyle(variables)}`
+        : `color-scheme:${resolvedMode};${variablesToInlineStyle(variables)}`
+
+    if (resolved.renderer.type === "iframe" && resolved.renderer.maxWidth != null) {
+      const mw =
+        typeof resolved.renderer.maxWidth === "number"
+          ? `${resolved.renderer.maxWidth}px`
+          : escapeHtml(resolved.renderer.maxWidth)
+      rootStyle += `;max-width:${mw};width:100%;margin-inline:auto`
+    }
 
     this.shadowRoot.innerHTML = `
       <style>${componentStyles}</style>

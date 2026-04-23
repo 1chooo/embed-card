@@ -184,8 +184,13 @@ const instagramProvider: EmbedProvider = {
         type: "iframe",
         src: instagramEmbedSrc(permalink),
         title: "Embedded Instagram post",
-        aspectRatio: "1 / 1",
-        minHeight: 520,
+        /**
+         * Narrow width matches IG’s embed column; 9:16 gives reels-style height, with a floor
+         * so posts with captions get enough vertical room before the iframe’s own scrolling.
+         */
+        aspectRatio: "9 / 16",
+        maxWidth: 328,
+        minHeight: 640,
         referrerPolicy: "strict-origin-when-cross-origin",
       },
     })

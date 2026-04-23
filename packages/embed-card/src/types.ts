@@ -32,6 +32,11 @@ export interface IframeEmbedRenderer {
   title: string
   aspectRatio?: string
   minHeight?: number
+  /**
+   * Limits the card width and centers it. Useful for providers (e.g. Instagram) whose
+   * embed UI is designed for a narrow column so content stays readable without extra scrolling.
+   */
+  maxWidth?: number | string
   allow?: string
   allowFullScreen?: boolean
   referrerPolicy?: EmbedReferrerPolicy
