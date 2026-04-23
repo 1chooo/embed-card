@@ -1,6 +1,12 @@
 import { fetchRedditPost } from "./reddit-data"
 import { buildRedditCardElement } from "./reddit-shadow-dom"
 import { resolveEmbed } from "./resolve"
+import {
+  TIKTOK_EMBED_ASPECT_RATIO,
+  TIKTOK_EMBED_MAX_WIDTH_PX,
+  TIKTOK_EMBED_MIN_HEIGHT_PX,
+  tiktokEmbedMaxHeightCss,
+} from "./tiktok-embed-layout"
 import { fetchTikTokVideoIdFromOEmbed } from "./tiktok-oembed"
 import {
   createThemeVariables,
@@ -88,15 +94,6 @@ function getThemeFromAttributes(element: HTMLElement): EmbedCardTheme {
 
 function renderContent(resolved: ResolvedEmbed, ctaLabel?: string): string {
   if (resolved.renderer.type === "iframe") {
-    const size = [
-      `aspect-ratio:${resolved.renderer.aspectRatio ?? "16 / 9"}`,
-      resolved.renderer.minHeight
-        ? `min-height:min(${resolved.renderer.minHeight}px,90vmin)`
-        : "",
-    ]
-      .filter(Boolean)
-      .join(";")
-
     return `
       <iframe
         allow="${escapeHtml(resolved.renderer.allow ?? "")}"
@@ -105,7 +102,6 @@ function renderContent(resolved: ResolvedEmbed, ctaLabel?: string): string {
         referrerpolicy="${escapeHtml(resolved.renderer.referrerPolicy ?? "strict-origin-when-cross-origin")}"
         ${resolved.renderer.sandbox ? `sandbox="${escapeHtml(resolved.renderer.sandbox)}"` : ""}
         src="${escapeHtml(resolved.renderer.src)}"
-        style="${size}"
         title="${escapeHtml(resolved.renderer.title)}"
       ></iframe>
     `
@@ -232,16 +228,32 @@ export class EmbedCardElement extends HTMLElement {
               : resolved.renderer.message
 
     let rootStyle =
-      resolved.renderer.type === "reddit_client" || resolved.renderer.type === "tiktok_client"
+      resolved.renderer.type === "reddit_client"
         ? `color-scheme:${resolvedMode};min-height:280px;padding:0;background:var(--embed-card-preview-canvas);${variablesToInlineStyle(variables)}`
-        : `color-scheme:${resolvedMode};${variablesToInlineStyle(variables)}`
+        : resolved.renderer.type === "tiktok_client"
+          ? `color-scheme:${resolvedMode};min-height:280px;padding:0;border:none;box-shadow:none;background:transparent;${variablesToInlineStyle(variables)}`
+          : `color-scheme:${resolvedMode};${variablesToInlineStyle(variables)}`
 
-    if (resolved.renderer.type === "iframe" && resolved.renderer.maxWidth != null) {
-      const mw =
-        typeof resolved.renderer.maxWidth === "number"
-          ? `${resolved.renderer.maxWidth}px`
-          : escapeHtml(resolved.renderer.maxWidth)
-      rootStyle += `;max-width:${mw};width:100%;margin-inline:auto`
+    if (resolved.renderer.type === "iframe") {
+      const r = resolved.renderer
+      const ar = escapeHtml(r.aspectRatio ?? "16 / 9")
+      rootStyle += `;aspect-ratio:${ar}`
+      if (r.minHeight != null) {
+        rootStyle += `;min-height:min(${r.minHeight}px,90vmin)`
+      }
+      if (r.maxHeight != null) {
+        rootStyle += `;max-height:min(${r.maxHeight}px,90vmin,65dvh)`
+      }
+      if (r.maxWidth != null) {
+        const mw =
+          typeof r.maxWidth === "number"
+            ? `${r.maxWidth}px`
+            : escapeHtml(String(r.maxWidth))
+        rootStyle += `;max-width:${mw};width:100%;margin-inline:auto`
+      }
+      if (r.embedChrome === "flush") {
+        rootStyle += `;border:none;box-shadow:none;background:transparent`
+      }
     }
 
     this.shadowRoot.innerHTML = `
@@ -299,8 +311,16 @@ export class EmbedCardElement extends HTMLElement {
     }
 
     const wrap = root.ownerDocument.createElement("div")
-    wrap.style.cssText =
-      "position:relative;width:100%;aspect-ratio:9/16;min-height:min(640px,90vmin);max-width:420px;margin-inline:auto"
+    wrap.style.cssText = [
+      "position:relative",
+      "width:100%",
+      `aspect-ratio:${TIKTOK_EMBED_ASPECT_RATIO}`,
+      `min-height:min(${TIKTOK_EMBED_MIN_HEIGHT_PX}px,90vmin)`,
+      `max-height:${tiktokEmbedMaxHeightCss()}`,
+      `max-width:${TIKTOK_EMBED_MAX_WIDTH_PX}px`,
+      "margin-inline:auto",
+      "background:transparent",
+    ].join(";")
 
     const iframe = root.ownerDocument.createElement("iframe")
     iframe.setAttribute("allow", "fullscreen")

@@ -1,5 +1,11 @@
 import { instagramEmbedSrc, isInstagramHost, parseInstagramPermalink } from "./instagram-url"
 import {
+  TIKTOK_EMBED_ASPECT_RATIO,
+  TIKTOK_EMBED_MAX_HEIGHT_PX,
+  TIKTOK_EMBED_MAX_WIDTH_PX,
+  TIKTOK_EMBED_MIN_HEIGHT_PX,
+} from "./tiktok-embed-layout"
+import {
   extractTikTokVideoId,
   isTikTokEmbedHost,
   isVmTikTokShortLink,
@@ -301,9 +307,11 @@ const tiktokProvider: EmbedProvider = {
           type: "iframe",
           src: `https://www.tiktok.com/embed/v2/${videoId}`,
           title: "Embedded TikTok video",
-          aspectRatio: "9 / 16",
-          maxWidth: 420,
-          minHeight: 640,
+          aspectRatio: TIKTOK_EMBED_ASPECT_RATIO,
+          maxWidth: TIKTOK_EMBED_MAX_WIDTH_PX,
+          minHeight: TIKTOK_EMBED_MIN_HEIGHT_PX,
+          maxHeight: TIKTOK_EMBED_MAX_HEIGHT_PX,
+          embedChrome: "flush",
           allow: "fullscreen",
           allowFullScreen: true,
           referrerPolicy: "strict-origin-when-cross-origin",

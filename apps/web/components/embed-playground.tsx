@@ -6,7 +6,9 @@ import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
 
 import {
   buildUrlOnlySnippet,
+  isTikTokDemoUrl,
   pillClassName,
+  tiktokPlaygroundFigureStyle,
 } from "@/components/embed-playground-shared"
 import { sampleEmbeds } from "@/lib/sample-urls"
 import { ThemedEmbedCard } from "embed-card/next-themes"
@@ -25,6 +27,7 @@ export function EmbedPlayground({
   const [url, setUrl] = useState<string>(initialUrl)
 
   const snippet = useMemo(() => buildUrlOnlySnippet(url), [url])
+  const isTikTok = isTikTokDemoUrl(url)
 
   const reset = useCallback(() => {
     setUrl(initialUrl)
@@ -39,8 +42,17 @@ export function EmbedPlayground({
     <div className={outerClass}>
       <div className="flex min-h-[280px] flex-1 flex-col lg:min-h-[min(520px,calc(100dvh-16rem))]">
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-6 lg:px-10">
-          <div className="w-full max-w-3xl min-w-0">
-            <ThemedEmbedCard url={url} />
+          <div
+            className={
+              isTikTok
+                ? "mx-auto w-full max-w-[328px] shrink-0"
+                : "max-h-[min(65dvh,520px)] w-full max-w-3xl min-w-0 overflow-y-auto"
+            }
+          >
+            <ThemedEmbedCard
+              style={isTikTok ? tiktokPlaygroundFigureStyle : undefined}
+              url={url}
+            />
           </div>
         </div>
       </div>

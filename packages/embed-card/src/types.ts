@@ -33,10 +33,20 @@ export interface IframeEmbedRenderer {
   aspectRatio?: string
   minHeight?: number
   /**
+   * Caps height in pixels (applied as `min(Npx, 90vmin, 65dvh)` on the card). Use with
+   * `aspectRatio` and optional `maxWidth` so the used size stays within bounds while keeping proportions.
+   */
+  maxHeight?: number
+  /**
    * Limits the card width and centers it. Useful for providers (e.g. Instagram) whose
    * embed UI is designed for a narrow column so content stays readable without extra scrolling.
    */
   maxWidth?: number | string
+  /**
+   * `"card"` (default): border, shadow, and tinted surface like other embeds.
+   * `"flush"`: no outer border or shadow and a transparent surface so hosts like TikTok that ship their own chrome are not double-framed.
+   */
+  embedChrome?: "card" | "flush"
   allow?: string
   allowFullScreen?: boolean
   referrerPolicy?: EmbedReferrerPolicy

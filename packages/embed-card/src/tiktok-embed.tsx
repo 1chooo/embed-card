@@ -3,6 +3,12 @@
 import type { CSSProperties } from "react"
 import { useEffect, useState } from "react"
 
+import {
+  TIKTOK_EMBED_ASPECT_RATIO,
+  TIKTOK_EMBED_MAX_WIDTH_PX,
+  TIKTOK_EMBED_MIN_HEIGHT_PX,
+  tiktokEmbedMaxHeightCss,
+} from "./tiktok-embed-layout"
 import { fetchTikTokVideoIdFromOEmbed } from "./tiktok-oembed"
 
 const shell: CSSProperties = {
@@ -11,6 +17,11 @@ const shell: CSSProperties = {
   height: "100%",
   minHeight: "280px",
   background: "var(--embed-card-preview-canvas)",
+}
+
+const shellFlush: CSSProperties = {
+  ...shell,
+  background: "transparent",
 }
 
 const iframeStyle: CSSProperties = {
@@ -110,11 +121,12 @@ export function TikTokEmbedPreview({ shareUrl, className, style }: TikTokEmbedPr
     <div
       className={className}
       style={{
-        ...shell,
+        ...shellFlush,
         ...style,
-        aspectRatio: "9 / 16",
-        minHeight: "min(640px, 90vmin)",
-        maxWidth: 420,
+        aspectRatio: TIKTOK_EMBED_ASPECT_RATIO,
+        minHeight: `min(${TIKTOK_EMBED_MIN_HEIGHT_PX}px, 90vmin)`,
+        maxHeight: tiktokEmbedMaxHeightCss(),
+        maxWidth: TIKTOK_EMBED_MAX_WIDTH_PX,
         marginInline: "auto",
       }}
     >

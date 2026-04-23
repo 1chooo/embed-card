@@ -4,7 +4,12 @@ import { useMemo, useState } from "react"
 
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
 
-import { buildUrlOnlySnippet, pillClassName } from "@/components/embed-playground-shared"
+import {
+  buildUrlOnlySnippet,
+  isTikTokDemoUrl,
+  pillClassName,
+  tiktokPlaygroundFigureStyle,
+} from "@/components/embed-playground-shared"
 import { sampleEmbeds } from "@/lib/sample-urls"
 import { ThemedEmbedCard } from "embed-card/next-themes"
 
@@ -22,6 +27,7 @@ export function HomeEmbedPlayground({
   const [url, setUrl] = useState<string>(initialUrl)
 
   const snippet = useMemo(() => buildUrlOnlySnippet(url), [url])
+  const isTikTok = isTikTokDemoUrl(url)
 
   const outerClass = [
     "not-prose flex min-h-0 min-w-0 flex-col border border-fd-border bg-fd-background lg:flex-row lg:rounded-sm",
@@ -31,8 +37,15 @@ export function HomeEmbedPlayground({
   return (
     <div className={outerClass}>
       <div className="flex min-h-[260px] flex-1 flex-col items-center justify-center px-4 py-6 sm:px-6 lg:min-h-[min(440px,calc(100dvh-20rem))]">
-        <div className="w-full max-w-3xl min-w-0">
+        <div
+          className={
+            isTikTok
+              ? "mx-auto w-full max-w-[328px] shrink-0"
+              : "max-h-[min(65dvh,520px)] w-full max-w-3xl min-w-0 overflow-y-auto"
+          }
+        >
           <ThemedEmbedCard
+            style={isTikTok ? tiktokPlaygroundFigureStyle : undefined}
             theme={{
               accentColor: "#e11d48",
               radius: 8,

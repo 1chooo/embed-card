@@ -103,7 +103,11 @@ import { EmbedCard } from "embed-card"
 
 **Resolve:** Canonical URLs must include **`/@username/video/<numeric id>`** — the card uses TikTok’s **`https://www.tiktok.com/embed/v2/{id}`** iframe. **`vm.tiktok.com/{code}`** has no id in the path, so the card uses a **`tiktok_client`** renderer: the visitor’s browser calls TikTok’s public **[oEmbed](https://developers.tiktok.com/doc/embed-videos)** endpoint (`https://www.tiktok.com/oembed?url=…`), reads the video id from the response, then loads the same embed iframe. Profile, tag, or home URLs on TikTok hosts do not resolve as embeds (you get the **link preview** fallback).
 
-**Customize:** `theme` (accent, radius, shadow, font, **`appearance`**) controls the **card chrome** (`colorScheme`, borders, gradients) the same as other providers — including when you use **`ThemedEmbedCard`** from `embed-card/next-themes` so the shell tracks the site light/dark toggle. TikTok’s **inside-iframe** chrome is controlled by TikTok; there is no documented iframe flag comparable to X’s Tweet `theme` parameter.
+**Layout:** The built-in TikTok embed uses a **9:16** aspect ratio with **max width** and **max height** on `IframeEmbedRenderer`. Height is clamped with **`min(<px>, 90vmin, 65dvh)`** so short viewports cap the card before `vmin` alone. The browser keeps proportions when width or height hits a limit.
+
+**Chrome:** TikTok resolves with **`embedChrome: "flush"`** on the iframe payload (and the same flush outer surface for **`tiktok_client`**): no package border, shadow, or gradient halo so TikTok’s own player is not double-framed.
+
+**Customize:** For TikTok, the outer figure stays flush as above; **`theme`** (`appearance`, radius, font, etc.) still applies where relevant. TikTok’s **inside-iframe** UI is controlled by TikTok; there is no documented iframe flag comparable to X’s Tweet `theme` parameter.
 
 ```tsx
 import { EmbedCard } from "embed-card"

@@ -58,6 +58,17 @@ const iframeStyle: CSSProperties = {
   border: "none",
 }
 
+/** Overrides {@link rootStyleBase} when `embedChrome === "flush"` on the iframe renderer. */
+const iframeFlushChrome: CSSProperties = {
+  border: "none",
+  boxShadow: "none",
+  background: "transparent",
+}
+
+function iframeMaxHeightValue(px: number): string {
+  return `min(${px}px, 90vmin, 65dvh)`
+}
+
 const invalidStyle: CSSProperties = {
   display: "grid",
   placeItems: "center",
@@ -115,9 +126,13 @@ export function EmbedCard({
       ...(resolved.renderer.minHeight
         ? { minHeight: `min(${resolved.renderer.minHeight}px, 90vmin)` }
         : {}),
+      ...(resolved.renderer.maxHeight
+        ? { maxHeight: iframeMaxHeightValue(resolved.renderer.maxHeight) }
+        : {}),
       ...(maxWidth != null
         ? { maxWidth, width: "100%", marginInline: "auto" as const }
         : {}),
+      ...(resolved.renderer.embedChrome === "flush" ? iframeFlushChrome : {}),
       ...style,
     } as CSSProperties
 
@@ -174,7 +189,7 @@ export function EmbedCard({
       colorScheme: resolvedMode,
       minHeight: "280px",
       padding: 0,
-      background: "var(--embed-card-preview-canvas)",
+      ...iframeFlushChrome,
       ...style,
     } as CSSProperties
 
