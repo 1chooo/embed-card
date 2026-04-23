@@ -5,6 +5,11 @@ import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared"
 export const SITE_GITHUB_URL = "https://github.com/1chooo/embed-card"
 export const SITE_NPM_URL = "https://www.npmjs.com/package/embed-card"
 
+/** Homepage / footer attribution */
+export const SITE_AUTHOR_NAME = "Hugo Lin"
+export const SITE_AUTHOR_URL = "https://1chooo.com"
+export const SITE_AUTHOR_X_URL = "https://x.com/1chooo___"
+
 function NpmLogo(props: SVGProps<SVGSVGElement>) {
   return (
     <svg role="img" viewBox="0 0 24 24" fill="currentColor" {...props}>

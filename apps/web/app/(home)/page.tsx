@@ -49,7 +49,7 @@ export default function HomePage() {
         suppressHydrationWarning
         type="application/ld+json"
       />
-      <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-14 px-6 pb-20 pt-10 md:gap-16 md:px-10 md:pb-24 md:pt-12">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-14 px-6 pb-20 pt-10 md:gap-16 md:px-10 md:pb-24 md:pt-12">
         <div className="home-hero-surface -mx-2 overflow-hidden shadow-sm sm:-mx-4 md:-mx-6">
           <HeroSection
             preview={
@@ -128,7 +128,7 @@ export default function HomePage() {
         </section>
 
         <HomePlaygroundSection />
-      </main>
+      </div>
     </>
   )
 }
