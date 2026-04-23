@@ -3,7 +3,6 @@ import { PanelRight } from "lucide-react"
 
 import { HomeEmbedPlayground } from "@/components/home-embed-playground"
 
-/** Matches `Reset` in the playground Options bar (`embed-playground.tsx`). */
 const btnOutline =
   "inline-flex items-center justify-center rounded-sm border border-fd-border px-2.5 py-1.5 text-[11px] font-medium text-fd-muted-foreground transition hover:bg-fd-muted/50 hover:text-fd-foreground"
 const btnPrimary =
@@ -25,15 +24,15 @@ export function HomePlaygroundSection() {
             Playground
           </h2>
           <p className="text-balance text-base leading-relaxed text-fd-muted-foreground sm:text-lg">
-            Paste a URL, pick a sample, and watch the card resolve in real
-            time—then copy a minimal React snippet. Open{" "}
+            Pick a sample to refresh the minimal React snippet. For a live
+            preview, URL field, and full layout, open{" "}
             <Link
               className="font-medium text-fd-foreground underline-offset-2 hover:underline"
               href="/docs/playground"
             >
               /docs/playground
-            </Link>{" "}
-            for the same UI beside the full docs sidebar.
+            </Link>
+            .
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
             <Link className={btnOutline} href="/docs">
