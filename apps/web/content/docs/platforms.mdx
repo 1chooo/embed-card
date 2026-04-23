@@ -16,6 +16,7 @@ Use them the same everywhere: [`<EmbedCard url="…" />`](./frameworks/react), [
 | [Reddit](#reddit) | `reddit.com`, `old.reddit.com` | **Client preview** (browser `fetch` to the public `.json` thread API, not an iframe) |
 | [Google Maps](#google-maps) | `google.com/maps…` | **Iframe** map (`output=embed` added when resolving) |
 | [Vimeo](#vimeo) | `vimeo.com`, `player.vimeo.com` | **Iframe** player |
+| [Instagram](#instagram) | `instagram.com`, `www`, `m` | **Iframe** embed (`instagram.com/…/embed/`) for `/p/`, `/reel/`, `/tv/` permalinks |
 | [Link preview](#generic-link-preview) | Any other valid `https://` URL | In-card **link** surface with title and hostname |
 | [Invalid input](#invalid-url) | Non-URL or empty string | Inline **message** prompting for a full URL |
 
@@ -91,6 +92,20 @@ import { EmbedCard } from "embed-card"
 
 ```tsx
 <EmbedCard url="https://vimeo.com/76979871" />
+```
+
+---
+
+## Instagram
+
+**Match:** `instagram.com`, `www.instagram.com`, `m.instagram.com`.
+
+**Resolve:** Public permalinks with **`/p/{shortcode}`**, **`/reel/{shortcode}`**, or **`/tv/{shortcode}`**. Profile, story, or home URLs do not resolve as embeds.
+
+**Customize:** The iframe is centered with a max width so the card stays readable on wide layouts; use `theme` for accent, radius, and appearance like other iframe providers.
+
+```tsx
+<EmbedCard url="https://www.instagram.com/p/DXKYttciGe7/" />
 ```
 
 ---

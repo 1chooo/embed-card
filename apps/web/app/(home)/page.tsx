@@ -1,7 +1,10 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 
 import { DocHighlightCards } from "@/components/home/doc-highlight-cards"
 import { FeatureGrid } from "@/components/home/feature-grid"
+import { HomeGuidesShowcase } from "@/components/home/home-guides-showcase"
+import { HomePlatformsSection } from "@/components/home/home-platforms-section"
 import { HeroSection } from "@/components/home/hero-section"
 import { InstallCommand } from "@/components/home/install-command"
 import { HomePlaygroundSection } from "@/components/home-playground-section"
@@ -83,13 +86,42 @@ export default function HomePage() {
           <FeatureGrid />
         </section>
 
+        <HomeGuidesShowcase
+          description="Each tile is a live EmbedCard for a real URL—hover to straighten the preview, then open the matching platform doc for URL rules and theming."
+          title="Guides"
+        />
+
+        <HomePlatformsSection
+          description={
+            <>
+              Built-in providers cover the hosts below. Read match rules,
+              caveats, and theming on{" "}
+              <Link
+                className="font-medium text-fd-foreground underline-offset-2 hover:underline"
+                href="/docs/platforms"
+              >
+                Supported platforms
+              </Link>
+              , or jump straight into the{" "}
+              <Link
+                className="font-medium text-fd-foreground underline-offset-2 hover:underline"
+                href="/docs/playground"
+              >
+                playground
+              </Link>{" "}
+              to paste any sample.
+            </>
+          }
+          title="Platforms"
+        />
+
         <section className="space-y-5">
           <div className="max-w-2xl space-y-1.5">
             <h2 className="text-lg font-semibold tracking-tight text-fd-foreground sm:text-xl">
-              Start from a guide
+              Quick links
             </h2>
             <p className="text-sm leading-relaxed text-fd-muted-foreground">
-              Jump straight into the path that matches how you build.
+              Docs, playground, and the full table of contents in one place.
             </p>
           </div>
           <DocHighlightCards />
