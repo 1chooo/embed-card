@@ -2,6 +2,9 @@ import type { SVGProps } from "react"
 import { BookOpenText, PlayCircle } from "lucide-react"
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared"
 
+export const SITE_GITHUB_URL = "https://github.com/1chooo/embed-card"
+export const SITE_NPM_URL = "https://www.npmjs.com/package/embed-card"
+
 function NpmLogo(props: SVGProps<SVGSVGElement>) {
   return (
     <svg role="img" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -16,7 +19,7 @@ export function baseOptions(): BaseLayoutProps {
       title: "embed-card",
       url: "/",
     },
-    githubUrl: "https://github.com/1chooo/embed-card",
+    githubUrl: SITE_GITHUB_URL,
     links: [
       {
         text: "Documentation",
@@ -32,7 +35,7 @@ export function baseOptions(): BaseLayoutProps {
       },
       {
         type: "icon",
-        url: "https://www.npmjs.com/package/embed-card",
+        url: SITE_NPM_URL,
         text: "npm",
         label: "embed-card on npm",
         icon: <NpmLogo />,

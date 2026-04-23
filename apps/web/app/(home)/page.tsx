@@ -1,70 +1,102 @@
-import Link from "next/link"
-import { ArrowRight, BookOpenText, PlayCircle } from "lucide-react"
+import type { Metadata } from "next"
 
+import { DocHighlightCards } from "@/components/home/doc-highlight-cards"
+import { FeatureGrid } from "@/components/home/feature-grid"
+import { HeroSection } from "@/components/home/hero-section"
+import { InstallCommand } from "@/components/home/install-command"
 import { HomePlaygroundSection } from "@/components/home-playground-section"
+import { SITE_GITHUB_URL, SITE_NPM_URL } from "@/lib/layout.shared"
 import { ThemedEmbedCard } from "embed-card/next-themes"
 
 const exampleUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
+const description =
+  "Pass a URL and render the matching embed card—YouTube, X, Reddit, Maps, Vimeo, and more—without wiring one-off components."
+
+export const metadata: Metadata = {
+  title: { absolute: "embed-card" },
+  description,
+  openGraph: {
+    title: "embed-card",
+    description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "embed-card",
+    description,
+  },
+}
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  name: "embed-card",
+  description,
+  url: SITE_NPM_URL,
+  codeRepository: SITE_GITHUB_URL,
+  programmingLanguage: "TypeScript",
+  license: "https://opensource.org/licenses/MIT",
+} as const
+
 export default function HomePage() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-16 px-6 py-16 md:px-10 md:py-20">
-      <section className="grid min-w-0 gap-12 lg:grid-cols-[1fr_minmax(0,1.05fr)] lg:items-center lg:gap-14">
-        <div className="min-w-0 space-y-8">
-          <div className="space-y-5">
-            <h1 className="text-balance text-4xl font-semibold tracking-tight text-fd-foreground sm:text-5xl">
-              Embed cards from a single URL
-            </h1>
-            <p className="max-w-lg text-base leading-7 text-fd-muted-foreground">
-              Pass a URL to <code className="text-sm">EmbedCard</code> and get
-              YouTube, X, Reddit, Google Maps, Vimeo, and more, with a sensible
-              fallback when nothing matches.
+    <>
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        suppressHydrationWarning
+        type="application/ld+json"
+      />
+      <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-14 px-6 pb-20 pt-10 md:gap-16 md:px-10 md:pb-24 md:pt-12">
+        <div className="home-hero-surface -mx-2 overflow-hidden shadow-sm sm:-mx-4 md:-mx-6">
+          <HeroSection
+            preview={
+              <ThemedEmbedCard
+                theme={{
+                  accentColor: "#e11d48",
+                  radius: 20,
+                }}
+                url={exampleUrl}
+              />
+            }
+          />
+
+          <div className="border-t border-fd-border px-5 py-8 sm:px-8">
+            <p className="text-[11px] font-semibold tracking-wider text-fd-muted-foreground uppercase">
+              Install
+            </p>
+            <div className="mt-4 max-w-2xl">
+              <InstallCommand />
+            </div>
+          </div>
+        </div>
+
+        <section className="space-y-5">
+          <div className="max-w-2xl space-y-1.5">
+            <h2 className="text-lg font-semibold tracking-tight text-fd-foreground sm:text-xl">
+              Built for product pages and docs
+            </h2>
+            <p className="text-sm leading-relaxed text-fd-muted-foreground">
+              One mental model for previews: paste a link, render a card, ship.
+              Explore how it maps to your stack below.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              className="inline-flex items-center gap-2 rounded-md bg-fd-primary px-4 py-2.5 text-sm font-medium text-fd-primary-foreground transition hover:opacity-90"
-              href="/docs/getting-started"
-            >
-              <BookOpenText className="size-4" />
-              Documentation
-              <ArrowRight className="size-4" />
-            </Link>
-            <Link
-              className="inline-flex items-center gap-2 rounded-md border border-fd-border px-4 py-2.5 text-sm text-fd-foreground transition hover:bg-fd-muted/50"
-              href="#playground"
-            >
-              <PlayCircle className="size-4" />
-              Playground
-            </Link>
+          <FeatureGrid />
+        </section>
+
+        <section className="space-y-5">
+          <div className="max-w-2xl space-y-1.5">
+            <h2 className="text-lg font-semibold tracking-tight text-fd-foreground sm:text-xl">
+              Start from a guide
+            </h2>
+            <p className="text-sm leading-relaxed text-fd-muted-foreground">
+              Jump straight into the path that matches how you build.
+            </p>
           </div>
-          <p className="max-w-lg text-sm leading-6 text-fd-muted-foreground">
-            React, web component, and manual rendering paths ship from one
-            package. Examples live in the repo under{" "}
-            <code className="text-xs">examples/</code>. The same playground also
-            lives under{" "}
-            <Link
-              className="font-medium text-fd-foreground underline-offset-2 hover:underline"
-              href="/docs/playground"
-            >
-              /docs/playground
-            </Link>{" "}
-            if you prefer the docs layout.
-          </p>
-        </div>
+          <DocHighlightCards />
+        </section>
 
-        <div className="min-w-0">
-          <ThemedEmbedCard
-            theme={{
-              accentColor: "#e11d48",
-              radius: 20,
-            }}
-            url={exampleUrl}
-          />
-        </div>
-      </section>
-
-      <HomePlaygroundSection />
-    </main>
+        <HomePlaygroundSection />
+      </main>
+    </>
   )
 }

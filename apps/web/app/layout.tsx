@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next"
-import type { CSSProperties, ReactNode } from "react"
+import type { ReactNode } from "react"
+import { GeistMono } from "geist/font/mono"
+import { GeistSans } from "geist/font/sans"
 
 import { RootProvider } from "fumadocs-ui/provider/next"
 
@@ -20,19 +22,14 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 }
 
-const fontVariables = {
-  "--font-sans": '"Avenir Next", "Gill Sans", sans-serif',
-  "--font-mono": '"SFMono-Regular", "Menlo", monospace',
-} as CSSProperties
-
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
       lang="en"
       suppressHydrationWarning
-      style={fontVariables}
     >
-      <body className="flex min-h-screen flex-col font-sans text-fd-foreground">
+      <body className="flex min-h-screen flex-col font-sans text-fd-foreground antialiased">
         <RootProvider>{children}</RootProvider>
       </body>
     </html>

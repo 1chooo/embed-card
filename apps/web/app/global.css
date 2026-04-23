@@ -5,6 +5,11 @@
 @source "../**/*.{ts,tsx,mdx}";
 @source "../content/**/*.{md,mdx}";
 
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -13,9 +18,60 @@ body {
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  background: oklch(0.985 0.004 95);
+  background: oklch(0.988 0.003 264);
 }
 
 .dark body {
-  background: oklch(0.18 0.012 260);
+  background: oklch(0.17 0.01 264);
+}
+
+/* Hero marketing surface: grid + soft radial glow (fumadocs light/dark safe) */
+.home-hero-surface {
+  position: relative;
+  isolation: isolate;
+  border-radius: 0 0 1rem 1rem;
+  border: 1px solid var(--color-fd-border);
+  background-color: var(--color-fd-background);
+  background-image:
+    radial-gradient(
+      120% 80% at 50% -20%,
+      color-mix(in srgb, var(--color-fd-primary) 11%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-fd-muted) 55%, transparent),
+      transparent 44%
+    );
+}
+
+.home-hero-surface::before {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-fd-border) 55%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-fd-border) 55%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 48px 48px;
+  mask-image: radial-gradient(
+    ellipse 85% 70% at 50% 0%,
+    black 22%,
+    transparent 72%
+  );
+  opacity: 0.5;
+}
+
+.dark .home-hero-surface::before {
+  opacity: 0.28;
 }
